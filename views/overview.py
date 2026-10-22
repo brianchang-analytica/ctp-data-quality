@@ -1,5 +1,7 @@
 """Overview: how each area is doing, and where to start."""
 
+from pathlib import Path
+
 import streamlit as st
 
 from dq.checks.core import AREA_ORDER, AREAS, area_of
@@ -29,7 +31,7 @@ for col, key in zip(cols, AREA_ORDER):
             )
             if st.button("Review", key=f"go_{key}", icon=":material/arrow_forward:", width="stretch"):
                 st.session_state["area"] = key
-                st.switch_page("views/checks.py")
+                st.switch_page(str(Path(__file__).resolve().with_name("checks.py")))
 
 md('<div class="dq-section"><h3>Start here</h3><span class="dq-section-sub">Most serious first</span></div>')
 top = [c for c in checks if simple.needs_attention(c, sums[c.id])]

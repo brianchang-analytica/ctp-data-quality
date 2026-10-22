@@ -68,7 +68,9 @@ Two exceptions read the source tables live: **Trace a submission** (one STN at a
 ### Setup from a GFE without Git or the CLI
 
 Follow [`DEPLOY_GFE.md`](DEPLOY_GFE.md). It uses `dist/ctp_dq_installer.py`, a single notebook
-that writes the whole app into your workspace when you run it.
+that writes the whole app into your workspace when you run it. Without any Python compute, use
+`dist/app_bundle/` instead: three files (the whole app packed into `app.py`) that deploy straight
+to Databricks Apps in live mode.
 
 ### Setup with a bundle (recommended)
 
@@ -174,6 +176,7 @@ tools/validate_checks.py  static validator: SQL, columns vs inventory, types, pl
 tools/smoke_duckdb.py     runs every check end to end in DuckDB on synthetic rows
 tools/smoke_snapshot.py   proves snapshot totals, trends and breakdowns equal live ones
 tools/build_installer.py  packs the app into dist/ctp_dq_installer.py, a one-file installer notebook
+tools/build_app_bundle.py packs the app into dist/app_bundle/, three files for Databricks Apps
 reference/table_inventory.csv  Unity Catalog column inventory the validator checks against
 ```
 

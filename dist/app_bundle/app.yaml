@@ -1,0 +1,29 @@
+# Databricks Apps settings for the single-file bundle (no refresh job, no Python compute needed).
+# Add a "SQL warehouse" resource to the app with resource key "sql-warehouse" and "Can use".
+command:
+  - streamlit
+  - run
+  - app.py
+  - --server.fileWatcherType=none
+  - --browser.gatherUsageStats=false
+  - --client.toolbarMode=minimal
+  - --theme.base=light
+  - --theme.primaryColor=#2a78d6
+  - --theme.backgroundColor=#f4f6fb
+  - --theme.secondaryBackgroundColor=#eaeef6
+  - --theme.textColor=#15161a
+
+env:
+  - name: DATABRICKS_WAREHOUSE_ID
+    valueFrom: sql-warehouse
+  - name: DQ_CATALOG
+    value: ctp_pd_catalog
+  # live = run the checks against the source tables when a steward opens the app.
+  # Switch to snapshot once a nightly refresh job (jobs/refresh_snapshot.py) can run.
+  - name: DQ_SOURCE
+    value: live
+  # Results are reused for 4 hours, so only the first visit after that waits for the checks.
+  - name: DQ_CACHE_MINUTES
+    value: "240"
+  - name: DQ_AUTH_MODE
+    value: app

@@ -4,6 +4,10 @@ Use this guide when CDERONE says "GitHub is not enabled for this workspace" and 
 CLI is not available. You import **one notebook**, run it, and it writes the whole app into your
 workspace. Then you create the refresh job and the app in the Databricks UI.
 
+**No Python compute?** If running the installer fails with "You are not authorized to create
+clusters" and no Serverless option is offered, skip to
+[No Python compute: the 3-file app](#no-python-compute-the-3-file-app) at the end.
+
 Menu names can differ slightly between Databricks versions (for example **Workflows** is called
 **Jobs & Pipelines** in newer workspaces).
 
@@ -115,3 +119,78 @@ GRANT USE SCHEMA, SELECT ON SCHEMA ctp_pd_catalog.gold_ctp_edw  TO `<app service
    `dist/ctp_dq_installer.py`.
 2. Import the new installer into the workspace (replace the old notebook) and click **Run all**.
 3. On the app page, click **Deploy** again. The refresh job picks up the new code on its next run.
+
+## No Python compute: the 3-file app
+
+Use this when your account cannot create clusters and has no serverless compute. The app runs on
+Databricks Apps' own compute, so it needs no cluster. It runs in **live mode**: there is no
+nightly refresh job, and the app runs the checks through the SQL warehouse when someone opens it.
+
+The first visit after the results expire waits a few minutes while the 24 checks run against the
+full tables. Results are then reused for 4 hours.
+
+### 1. Get the three files onto your GFE
+
+They are in the repo folder `dist/app_bundle/`:
+
+* `app.py`: the whole app packed into one file (about 260 KB)
+* `app.yaml`: the app settings, already set to live mode
+* `requirements.txt`: the Python packages
+
+On GitHub, open each file and click **Download raw file**. Or copy them with an agency-approved
+transfer method.
+
+### 2. Upload them into one workspace folder
+
+1. In **Workspace**, go to your home folder and click **Create > Folder**. Name it
+   `ctp_dq_app_live`.
+2. Open the new folder. Click **⋮ > Import**, choose **File**, and import `app.py`.
+3. Repeat for `app.yaml` and `requirements.txt`. The folder must hold exactly these three files.
+
+If Import refuses `app.yaml` or `requirements.txt`, click **Create > File** instead, give it
+the same name, and paste the file's contents.
+
+If `app.py` opens as a notebook after import, delete it and import it again with **File**.
+It must stay a plain file.
+
+### 3. Create the app
+
+1. Open **Compute > Apps** and click **Create app**.
+2. Choose **Create a custom app** and name it `ctp-data-quality`.
+3. Under **App resources**, click **Add resource > SQL warehouse**. Pick your warehouse, set the
+   permission to **Can use**, and set the resource key to **`sql-warehouse`**.
+4. Click **Create app** and wait for **Running**.
+5. Click **Deploy** and choose the folder `/Workspace/Users/<you>/ctp_dq_app_live`.
+
+### 4. Give the app read access to the source data
+
+In live mode the app reads the source tables directly. Copy the app's service principal from the
+app page and run this in the SQL editor (or ask the schema owner to):
+
+```sql
+GRANT USE CATALOG ON CATALOG ctp_pd_catalog TO `<app service principal>`;
+GRANT USE SCHEMA, SELECT ON SCHEMA ctp_pd_catalog.slvr_ctp_core        TO `<app service principal>`;
+GRANT USE SCHEMA, SELECT ON SCHEMA ctp_pd_catalog.gold_ctp_edw         TO `<app service principal>`;
+GRANT USE SCHEMA, SELECT ON SCHEMA ctp_pd_catalog.brnz_esub_itrac      TO `<app service principal>`;
+GRANT USE SCHEMA, SELECT ON SCHEMA ctp_pd_catalog.brnz_rhapsody_public TO `<app service principal>`;
+GRANT USE SCHEMA, SELECT ON SCHEMA ctp_pd_catalog.brnz_pms_product     TO `<app service principal>`;
+GRANT USE SCHEMA, SELECT ON SCHEMA ctp_pd_catalog.brnz_pms_reference   TO `<app service principal>`;
+GRANT USE SCHEMA, SELECT ON SCHEMA ctp_pd_catalog.slvr_ctp_dq          TO `<app service principal>`;
+```
+
+### 5. Open, check and share
+
+1. Click the app's URL. The first load can take a few minutes. The footer then reads
+   **Live results from** with the time.
+2. On the app page, open **Permissions** and give stewards **Can use**.
+
+### Switching to the nightly refresh later
+
+When you get Python compute, follow steps 2 to 4 at the top of this guide to set up the refresh
+job. Then change `DQ_SOURCE` from `live` to `snapshot` in `app.yaml` and deploy again. Pages then
+load in seconds.
+
+### Updating the 3-file app
+
+On a machine with the code, run `python tools/build_app_bundle.py`. Upload the new `app.py`
+over the old one, then click **Deploy** on the app page.
