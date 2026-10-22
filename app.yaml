@@ -1,0 +1,24 @@
+# Databricks Apps configuration.
+# Add a "SQL warehouse" resource to the app with resource key "sql-warehouse" and "Can use"
+# permission (databricks.yml does this for you); its ID is injected below.
+command: ["streamlit", "run", "app.py"]
+
+env:
+  - name: DATABRICKS_WAREHOUSE_ID
+    valueFrom: sql-warehouse
+  - name: DQ_CATALOG
+    value: ctp_pd_catalog
+  # snapshot = read the results saved by the scheduled refresh job (recommended)
+  # live     = run every check against the source tables on demand
+  - name: DQ_SOURCE
+    value: snapshot
+  - name: DQ_RESULTS_SCHEMA
+    value: slvr_ctp_dq
+  # app  = queries run as the app's service principal
+  # user = queries run as each signed-in steward (enable user authorization with the sql scope)
+  - name: DQ_AUTH_MODE
+    value: app
+  - name: DQ_CACHE_MINUTES
+    value: "30"
+  - name: STREAMLIT_BROWSER_GATHER_USAGE_STATS
+    value: "false"

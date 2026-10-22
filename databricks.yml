@@ -1,0 +1,71 @@
+# Databricks Asset Bundle: deploys the app AND its scheduled refresh job with one command.
+#   databricks bundle validate -t prod
+#   databricks bundle deploy   -t prod --var="warehouse_id=<SQL warehouse id>"
+#   databricks bundle run ctp_dq_refresh -t prod        # first refresh (then it runs on schedule)
+#   databricks bundle run ctp_data_quality -t prod      # start / redeploy the app
+# Requires a recent Databricks CLI (apps in bundles: v0.239+). If bundles are not available in
+# the workspace, follow "Connecting to the data -> Manual setup" in README.md instead.
+
+bundle:
+  name: ctp-data-quality
+
+variables:
+  catalog:
+    description: Unity Catalog catalog holding the CTP data
+    default: ctp_pd_catalog
+  results_schema:
+    description: Schema where the refresh job saves results (needs CREATE TABLE + MODIFY for the job)
+    default: slvr_ctp_dq
+  warehouse_id:
+    description: ID of the SQL warehouse the app reads through
+
+resources:
+  jobs:
+    ctp_dq_refresh:
+      name: CTP data quality refresh
+      description: Runs every data-quality check and saves the results the CTP Data Quality app reads.
+      schedule:
+        quartz_cron_expression: "0 0 5 ? * MON-FRI"   # weekdays 5:00 AM
+        timezone_id: America/New_York
+        pause_status: UNPAUSED
+      max_concurrent_runs: 1
+      email_notifications:
+        on_failure: []          # add the data team's address(es)
+      tasks:
+        - task_key: refresh
+          spark_python_task:
+            python_file: ./jobs/refresh_snapshot.py
+            parameters:
+              - --catalog
+              - ${var.catalog}
+              - --results-schema
+              - ${var.results_schema}
+              - --checks
+              - all
+          environment_key: default
+          timeout_seconds: 7200
+      # Serverless jobs compute. If serverless is not enabled in the workspace, replace this
+      # block with a job_clusters entry and set job_cluster_key on the task instead.
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
+
+  apps:
+    ctp_data_quality:
+      name: ctp-data-quality
+      description: CTP Data Quality — find missing, mismatched and late records across eSUB, Rhapsody, PMS and Reporting.
+      source_code_path: .
+      resources:
+        - name: sql-warehouse
+          description: SQL warehouse the app reads results through
+          sql_warehouse:
+            id: ${var.warehouse_id}
+            permission: CAN_USE
+
+targets:
+  dev:
+    mode: development
+    default: true
+  prod:
+    mode: production
