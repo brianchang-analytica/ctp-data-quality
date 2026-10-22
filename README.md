@@ -65,6 +65,11 @@ every check against the source tables while a steward waits.
 Two exceptions read the source tables live: **Trace a submission** (one STN at a time) and
 `DQ_SOURCE=live`, which skips the snapshot entirely.
 
+### Setup from a GFE without Git or the CLI
+
+Follow [`DEPLOY_GFE.md`](DEPLOY_GFE.md). It uses `dist/ctp_dq_installer.py`, a single notebook
+that writes the whole app into your workspace when you run it.
+
 ### Setup with a bundle (recommended)
 
 `databricks.yml` defines both the app and the refresh job.
@@ -168,6 +173,7 @@ databricks.yml         bundle: the app plus the refresh job
 tools/validate_checks.py  static validator: SQL, columns vs inventory, types, plain-language style
 tools/smoke_duckdb.py     runs every check end to end in DuckDB on synthetic rows
 tools/smoke_snapshot.py   proves snapshot totals, trends and breakdowns equal live ones
+tools/build_installer.py  packs the app into dist/ctp_dq_installer.py, a one-file installer notebook
 reference/table_inventory.csv  Unity Catalog column inventory the validator checks against
 ```
 
