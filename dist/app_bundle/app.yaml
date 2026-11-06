@@ -27,3 +27,7 @@ env:
     value: "240"
   - name: DQ_AUTH_MODE
     value: app
+  # Optional: read the rules' wording and limits from a workspace file (see the Rule list page).
+  # Give the app's service principal "Can read" on the file.
+  # - name: DQ_RULES_PATH
+  #   value: /Workspace/Shared/ctp_dq/ctp_dq_rules.json

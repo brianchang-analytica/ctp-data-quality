@@ -1,4 +1,4 @@
-"""The MVP's curated core set of checks, and the five areas the MVP groups them into.
+"""The MVP's curated core set of checks, and the four areas the MVP groups them into.
 
 The full catalog stays in the group modules; the MVP shows only CORE_CHECK_IDS
 so stewards can review and test a small, high-value set first. Set
@@ -55,7 +55,6 @@ class Area:
 
 
 AREAS: dict[str, Area] = {
-    "across": Area("across", "Across systems", "Records that should match 1-to-1 between systems.", "#6250d6"),
     "esub": Area("esub", "eSUB", "Incoming submissions and their log-in records.", "#2a78d6"),
     "rhapsody": Area("rhapsody", "Rhapsody", "Submissions under CTP review.", "#eb6834"),
     "pms": Area("pms", "PMS", "The master list of tobacco products.", "#1baf7a"),
@@ -67,12 +66,18 @@ AREA_ORDER = list(AREAS)
 KIND_WORDS = {"Completeness": "Missing", "Consistency": "Doesn't match", "Timeliness": "Timing"}
 
 
-def area_of(check: Check) -> str:
+def areas_of(check: Check) -> list[str]:
+    """Every area a check shows in. A check that compares two systems shows under both, so
+    "Rhapsody submissions missing from eSUB" counts for eSUB and for Rhapsody. Reporting has no
+    area of its own: its comparisons show under the system it is compared with."""
     if check.entity == "Data feeds":
-        return "feeds"
-    if check.is_cross_system:
-        return "across"
-    return check.home_system if check.home_system in AREAS else "feeds"
+        return ["feeds"]
+    return [s for s in check.systems if s in AREAS] or ["feeds"]
+
+
+def area_of(check: Check) -> str:
+    """The first area a check shows in."""
+    return areas_of(check)[0]
 
 
 def active_checks() -> list[Check]:

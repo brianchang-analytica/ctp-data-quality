@@ -1,0 +1,1696 @@
+{
+  "format": "ctp-dq-rules/1",
+  "about": "Wording and limits for the CTP Data Quality app. Each rule is one check. You can change title, what_it_checks, why_it_matters, how_to_fix, impact (High, Medium or Low), needs_attention_below_pct, action_needed_below_pct and assumptions. The app ignores changes to the other fields. The logic of each check stays in the app.",
+  "rules": [
+    {
+      "id": "ESUB_APPLICATION_LINK_BROKEN",
+      "title": "Application links to missing records",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Missing",
+      "counts": "links",
+      "date_used": "Link created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does every application link in eSUB point to an existing application and log-in record?",
+      "why_it_matters": "eSUB uses these links to group submissions under their application. A broken link drops the submission from the application's history and makes application counts wrong.",
+      "how_to_fix": "Look up the application number or STN in eSUB. If the application or log-in record was removed on purpose, ask eSUB support to delete the leftover link. Otherwise, ask them to restore the record. Delete any extra copy of a repeated link.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An application marked deleted should have no linked submissions.",
+        "A submission with an inactive log-in record can keep its application link. That case is shown but not counted as a problem.",
+        "Submission type and organization come from the Rhapsody record with the same STN. Records with no STN or no Rhapsody match show '(not recorded)' in those filters."
+      ]
+    },
+    {
+      "id": "ESUB_LINK_STN_NOT_FOUND",
+      "title": "Broken or repeated submission links",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Missing",
+      "counts": "links",
+      "date_used": "Link created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does every submission link in eSUB connect two different STNs that eSUB has, with no repeats?",
+      "why_it_matters": "Links tie amendments and related filings to the original submission. A link to a mistyped STN hides the related filing from reviewers and makes amendment counts wrong.",
+      "how_to_fix": "Open the STN shown in eSUB and review its linked submissions. Fix a mistyped STN using the company's cover letter, or remove a link entered by mistake. Remove any extra copy of a repeated link.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Every linked STN should itself be in eSUB. Links to submissions older than eSUB, if any, will appear here.",
+        "STN holds the submission that owns the link. CHILD_STN holds the linked submission.",
+        "Submission type and organization come from the Rhapsody record with the same STN. Records with no STN or no Rhapsody match show '(not recorded)' in those filters."
+      ]
+    },
+    {
+      "id": "ESUB_LOGIN_INACTIVE_NO_REASON",
+      "title": "Inactive log-in records with no reason",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Missing",
+      "counts": "inactive log-in records",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does every inactive log-in record in eSUB give a reason?",
+      "why_it_matters": "Marking a log-in record inactive removes the submission from counts and from review. Without a reason, a mistake looks the same as a valid withdrawal.",
+      "how_to_fix": "Open the log-in record in eSUB and pick the inactive reason. Add a short comment such as 'duplicate of PM0000123'. If the submission should be active, ask the Document Control Center to reactivate it.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "REASON_INACTIVE_CODE is the coded reason. COMMENTS_INACTIVE is the free-text explanation. Either one is enough.",
+        "Reasons are expected for every inactive record. If older records were inactivated before the reason field existed, narrow the time period to recent years."
+      ]
+    },
+    {
+      "id": "ESUB_LOGIN_REQUIRED_FIELDS_BLANK",
+      "title": "Log-in records missing required fields",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Missing",
+      "counts": "log-in records",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does every active eSUB log-in record have an STN, received date, company and document type?",
+      "why_it_matters": "Staff find and count submissions by these four fields. A blank received date also leaves the review clock with no start date.",
+      "how_to_fix": "Find the log-in record in eSUB by STN or eSUB record number. Fill in the blank field from the cover letter or receipt. If the record should not exist, ask the Document Control Center to mark it inactive. A blank STN is flagged even when the record has an STN link, because that eSUB field does not hold an STN.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "NAME on a log-in record is the company (applicant). SUBMITTER_NAME is the person who sent it.",
+        "STNs are assigned within 3 days of the log-in date. Newer records with no STN are not flagged.",
+        "An inactive log-in record was withdrawn or replaced, so these counts exclude it.",
+        "Submission type and organization come from the Rhapsody record with the same STN. Records with no STN or no Rhapsody match show '(not recorded)' in those filters."
+      ]
+    },
+    {
+      "id": "ESUB_SUBMISSION_NOT_LOGGED_IN",
+      "title": "Electronic submissions with no log-in record",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Missing",
+      "counts": "submissions",
+      "date_used": "Date created in eSUB",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does every electronic submission received through eSUB have a log-in record?",
+      "why_it_matters": "A submission with no log-in record never reaches CTP reviewers and is missing from official counts. The company may already be waiting on a decision.",
+      "how_to_fix": "Search the eSUB log-in list for the STN and the package number shown. If the submission was logged under a different STN, correct the STN on the log-in record. If there is no log-in record, ask the Document Control Center to create one. If it is a test or a duplicate, ask eSUB support to mark the electronic submission inactive. Submissions from the last 3 days or on hold are not checked.",
+      "needs_attention_below_pct": 99.5,
+      "action_needed_below_pct": 98,
+      "assumptions": [
+        "An electronic submission gets its STN only after FDA receives it, so unsent drafts are excluded.",
+        "If most submissions of one kind have log-in records, every submission of that kind should have one. Kinds that rarely have log-in records are assumed to go through another process. A fixed list from the eSUB owners would be better.",
+        "A submission on hold needs no log-in record until the hold is lifted.",
+        "A new electronic submission should have a log-in record within 3 calendar days."
+      ]
+    },
+    {
+      "id": "ESUB_SUBMISSION_NO_FILES",
+      "title": "Electronic submissions with no files attached",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Missing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does every logged-in electronic submission in eSUB have at least one file attached?",
+      "why_it_matters": "Reviewers work from the files. A submission with no files cannot be reviewed, and FDA's record of what the company sent is incomplete.",
+      "how_to_fix": "Open the submission in eSUB and check its files. If the files are in the document repository but not attached, ask eSUB support to re-attach them. If nothing arrived, ask the Document Control Center to contact the submitter.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "eSUB's document list records every file for an electronic submission. No files live only in another repository.",
+        "Files can take up to 2 days to appear after receipt. Newer submissions are not checked yet.",
+        "A submission that has only a cover letter is not flagged.",
+        "Submission type and organization come from the Rhapsody record with the same STN. Records with no STN or no Rhapsody match show '(not recorded)' in those filters."
+      ]
+    },
+    {
+      "id": "FEED_ESUB_PROCESSING_LOSS",
+      "title": "eSUB records lost in processing",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Missing",
+      "counts": "data feeds",
+      "date_used": "Latest data",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does every record received from eSUB reach the processed copy that reports use?",
+      "why_it_matters": "Records from eSUB land first in an as-received copy. Processing then builds the version that Reporting and this app read. A record lost between the two steps vanishes from every count without warning.",
+      "how_to_fix": "Tell the data engineering team which eSUB feed is flagged and how many records are missing. Include the date of the oldest missing record. If the reason says the records arrived after the last refresh, re-check after the next refresh before you escalate.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Every record in the as-received copy should reach the processed copy. Nothing is filtered out on purpose. Rhapsody temporary working copies are left out, in case processing skips them by design.",
+        "Each pair uses a record ID that means the same thing in both copies. Processing builds each processed copy from the as-received copy in its pair. For Rhapsody, that is the direct Rhapsody copy, not the older CDR archive copy.",
+        "The as-received copy keeps every record it receives and is not emptied after each load. An empty copy means the feed failed.",
+        "Records received after the last processing run are flagged only when there are unusually many. A record received just before an unfinished run can be flagged once. The flag clears when the run ends."
+      ]
+    },
+    {
+      "id": "FEED_ESUB_WEEKLY_LOGIN_VOLUME",
+      "title": "Weeks with unusually few eSUB log-ins",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Missing",
+      "counts": "weeks",
+      "date_used": "Latest data",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does every week in the last two years have a normal number of submissions logged in eSUB?",
+      "why_it_matters": "A week with few or no log-ins usually means records failed to load, not that industry stopped submitting. Submission counts and trend charts for that week come out too low.",
+      "how_to_fix": "Compare the week's count with the eSUB log-in list for the same dates. If eSUB shows more, report the week to the data engineering team so they can reload the missing records. Ignore holiday weeks and known FDA closures.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 98,
+      "assumptions": [
+        "The log-in date is when the record was entered in iTRAC (date entered, else created, else received).",
+        "Outside holiday weeks and FDA closures, weekly volume stays above a third of the recent median unless the feed has a gap."
+      ]
+    },
+    {
+      "id": "ESUB_LOGIN_DOC_TYPE_NOT_IN_LIST",
+      "title": "Unknown or retired document types",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "log-in records",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does every log-in record use a current document type from eSUB's list?",
+      "why_it_matters": "The document type says what kind of submission it is. Counts by type depend on it. An unknown or retired type drops the submission from those counts or puts it in the wrong group.",
+      "how_to_fix": "Open the log-in record in eSUB. Use the cover letter to pick the correct document type from the list. If the right type is missing from the list, ask eSUB support to add it.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "A document type marked not active in eSUB's list is retired. New log-ins should not use it.",
+        "A retired type's last-changed date falls on or after its retirement date. Only records logged in after that date are flagged.",
+        "Submission type and organization come from the Rhapsody record with the same STN. Records with no STN or no Rhapsody match show '(not recorded)' in those filters."
+      ]
+    },
+    {
+      "id": "ESUB_LOGIN_DUPLICATE_STN",
+      "title": "Duplicate STNs on eSUB log-in records",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "STNs",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Is each STN on only one active eSUB log-in record?",
+      "why_it_matters": "An STN identifies exactly one submission. A second log-in counts the submission twice and can send it to review twice. The copies may also show different received dates.",
+      "how_to_fix": "Open every log-in record for the STN in eSUB and compare each with the receipt. Keep the correct one. Ask the Document Control Center to mark the extra copies inactive. If a different submission got this STN by mistake, ask them to assign the right STN.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Each STN belongs on exactly one active log-in record. If eSUB logs extra packages or amendments under the same STN by design, narrow this check.",
+        "An inactive log-in record was withdrawn or replaced, so these counts exclude it.",
+        "Submission type and organization come from the Rhapsody record with the same STN. Records with no STN or no Rhapsody match show '(not recorded)' in those filters."
+      ]
+    },
+    {
+      "id": "ESUB_LOGIN_STN_FORMAT",
+      "title": "STN format errors in eSUB",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "log-in records",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Is every STN in eSUB in capital letters with no spaces, following the usual pattern?",
+      "why_it_matters": "Other systems and searches match submissions on the exact STN. One stray space or wrong character hides the submission from search and breaks its match with Rhapsody and Reporting.",
+      "how_to_fix": "Open the log-in record in eSUB and retype the STN exactly as the receipt shows it. Where the fix is obvious, the suggested STN is shown. For an unusual pattern, confirm the STN with the Document Control Center before you change it.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "A correct STN has no spaces. It uses capital letters and digits. Periods and dashes are also allowed.",
+        "An STN pattern shared by fewer than 1 in 1,000 log-in records is most likely a typo, such as a missing digit. A rare pattern that is valid will show here until someone adjusts the threshold.",
+        "Submission type and organization come from the Rhapsody record with the same STN. Records with no STN or no Rhapsody match show '(not recorded)' in those filters."
+      ]
+    },
+    {
+      "id": "ESUB_LOGIN_DATES_IMPOSSIBLE",
+      "title": "Impossible dates on log-in records",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Timing",
+      "counts": "log-in records",
+      "date_used": "Date added to eSUB",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Are the dates on every log-in record possible and in the right order?",
+      "why_it_matters": "The received date starts the review clock and sets deadlines. A future date or dates out of order almost always mean a typo. That typo makes review times and deadline reports wrong.",
+      "how_to_fix": "Open the log-in record in eSUB. Compare each date with the cover letter and the receipt. The courier or gateway receipt shows the true received date. Correct the wrong date. The usual cause is a wrong year or a swapped day and month. A received date may fall up to 5 days after the log-in date. So a received date after today is flagged only when it is also more than 5 days after the log-in date.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "DATE_ENTERED is the log-in date. When it is blank, the record's creation date is used instead.",
+        "No CTP submission can predate June 22, 2009, when FDA began regulating tobacco products.",
+        "A received date can fall up to 5 days after the log-in date. Submissions that arrive outside business hours count as received the next business day. A received date after today is flagged only when it is also more than 5 days after the log-in date.",
+        "An inactive log-in record was withdrawn or replaced, so these counts exclude it.",
+        "Submission type and organization come from the Rhapsody record with the same STN. Records with no STN or no Rhapsody match show '(not recorded)' in those filters."
+      ]
+    },
+    {
+      "id": "ESUB_LOGIN_LONG_DELAYS",
+      "title": "Long receipt or log-in delays",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Timing",
+      "counts": "log-in records",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Was every submission received within 30 days of being sent, and logged in within 14 days after that?",
+      "why_it_matters": "A long gap usually means a mistyped date (often the year or month), which shifts the review clock. If the dates are right, the submission sat unprocessed. That delays review and puts deadlines at risk.",
+      "how_to_fix": "Compare the dates on the eSUB log-in record with the receipt and the cover letter. If a date is wrong, correct it. If the dates are right, report the delay to the Document Control Center.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "More than 30 days between the company's submitted date and FDA's received date is unusual enough to review.",
+        "Submissions are normally logged in within 14 days of receipt.",
+        "DATE_ENTERED is the log-in date. When it is blank, the record's creation date is used instead. Records copied into eSUB from an older system may show a late log-in date.",
+        "An inactive log-in record was withdrawn or replaced, so these counts exclude it.",
+        "Submission type and organization come from the Rhapsody record with the same STN. Records with no STN or no Rhapsody match show '(not recorded)' in those filters."
+      ]
+    },
+    {
+      "id": "FEED_ESUB_FRESHNESS",
+      "title": "eSUB feeds overdue for a refresh",
+      "systems": [
+        "eSUB"
+      ],
+      "problem_type": "Timing",
+      "counts": "data feeds",
+      "date_used": "Latest data",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Has every eSUB data feed refreshed within the last working day?",
+      "why_it_matters": "This app and CTP reports read a copy of eSUB that refreshes automatically. When a feed stops, every number that uses it goes out of date without warning.",
+      "how_to_fix": "Tell the data engineering team which eSUB feed is flagged and when it last refreshed. Treat eSUB numbers as out of date until the team fixes the feed. A single flag on the first working day after a holiday is normal.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Each copy gets new or changed records every working day. A working day with no load means the feed did not run.",
+        "A feed may be flagged once on the first working day after a federal holiday, because nothing changed on the holiday. The flag clears with the next refresh."
+      ]
+    },
+    {
+      "id": "ESUB_RHAP_MISSING_IN_ESUB",
+      "title": "Rhapsody submissions missing from eSUB",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does every Rhapsody submission have an eSUB log-in with the same STN?",
+      "why_it_matters": "Every submission should be logged in eSUB before review. A Rhapsody submission with no eSUB log-in may have a mistyped STN, or it may be a test or duplicate record. Sometimes the receipt was never officially recorded. Official counts then disagree.",
+      "how_to_fix": "Search eSUB for the STN. A submission whose eSUB log-ins are all inactive is still in eSUB, so it passes here. If it is still open in Rhapsody, it appears in 'Inactive in eSUB but still open in Rhapsody'. For 'Under another STN', compare both STNs. Correct the mistyped one, or enter the STN in eSUB if it is blank there. For 'Deleted from eSUB', ask the eSUB log-in team whether the submission is real. If it is not, close it in Rhapsody. For 'Only in Rhapsody', ask the eSUB log-in team to record it in eSUB. Records added in the last 3 days are skipped.",
+      "needs_attention_below_pct": 99,
+      "action_needed_below_pct": 95,
+      "assumptions": [
+        "If most Rhapsody submissions of a type have an eSUB log-in, every submission of that type should. Types that rarely have one are assumed to start directly in Rhapsody."
+      ]
+    },
+    {
+      "id": "ESUB_RHAP_MISSING_IN_RHAPSODY",
+      "title": "Submissions missing from Rhapsody",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does every submission logged in eSUB appear in Rhapsody?",
+      "why_it_matters": "A submission that never reaches Rhapsody is never reviewed, and its review clock runs unnoticed. eSUB and Rhapsody then report different counts of submissions received.",
+      "how_to_fix": "Search Rhapsody for the STN. For 'Under another STN', compare both STNs with the eSUB log-in record. Correct the mistyped one. For 'Only in eSUB', ask the Rhapsody intake team to create the submission. If the eSUB log-in was a mistake or a duplicate, mark it inactive in eSUB instead. Log-ins from the last 5 days are skipped, the same limit as 'Submissions slow to reach Rhapsody (over 5 days)'.",
+      "needs_attention_below_pct": 99.5,
+      "action_needed_below_pct": 98,
+      "assumptions": [
+        "eSUB log-ins marked inactive are not expected in Rhapsody.",
+        "If most log-ins of an eSUB document type reach Rhapsody, all of them should. Types that rarely reach Rhapsody are assumed to be handled elsewhere. A fixed list from the data owners would be better.",
+        "A document type is expected in Rhapsody only from the month its log-ins first appear there.",
+        "Five calendar days after log-in is enough time for a submission to reach Rhapsody.",
+        "Submissions received before Rhapsody was in regular use were never meant to be there. Regular use starts with the first month Rhapsody created 20 or more submissions."
+      ]
+    },
+    {
+      "id": "RPT_ESUB_LINKS_MISSING_FROM_REPORTING",
+      "title": "eSUB submission links missing from Reporting",
+      "systems": [
+        "eSUB",
+        "Reporting"
+      ],
+      "problem_type": "Missing",
+      "counts": "links",
+      "date_used": "Link created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does every eSUB link between two submissions (such as an amendment and its original) also appear in Reporting?",
+      "why_it_matters": "Reports use these links to tie amendments to the original submission and to count amendments per application. A missing link makes an amendment look unrelated. It also under-counts the work on the original.",
+      "how_to_fix": "Find both STNs in eSUB and confirm the link is correct. If the reason says a submission that is active in Rhapsody is missing from Reporting, fix that first using the submissions checks. Otherwise, send both STNs to the Reporting (EDW) team. A submission that is not active in Rhapsody is not expected in Reporting's submission list, but its links still are. Link types that Reporting leaves out by design are not checked.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "In eSUB the STN is the parent submission and the child STN is the amendment or other linked submission.",
+        "Reporting's link list also holds links to submissions that never reached Rhapsody, so those links are still checked."
+      ]
+    },
+    {
+      "id": "ESUB_RHAP_COMPANY_DIFFERS",
+      "title": "Company name differs: eSUB vs Rhapsody",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "Medium",
+      "what_it_checks": "Does each submission show the same company in eSUB and Rhapsody?",
+      "why_it_matters": "Stewards and reviewers search and report by company. A mismatch undercounts a firm's submissions and can send letters to the wrong firm.",
+      "how_to_fix": "Compare the eSUB log-in record with the company on the cover letter. Correct the company in the system that is wrong. If the firm changed its name or was acquired, use the current registered name. Capital letters and punctuation are ignored. Endings such as Inc, LLC, Co or Corp are also ignored. A match with any Rhapsody company field counts. Rhapsody records from the last 3 days are skipped while staff finish data entry.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "eSUB's NAME field on the log-in record is the company (applicant) name, not a person.",
+        "Rhapsody's iTRAC company field is copied from eSUB. A match with Rhapsody's registered company name or alias is also acceptable."
+      ]
+    },
+    {
+      "id": "ESUB_RHAP_INACTIVE_STILL_OPEN",
+      "title": "Inactive in eSUB but still open in Rhapsody",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Is the submission marked closed in Rhapsody when all its eSUB log-ins are inactive?",
+      "why_it_matters": "A submission withdrawn or replaced in eSUB can stay open in Rhapsody. It then inflates the review queue and pending counts. Staff may also review it for nothing.",
+      "how_to_fix": "Read the eSUB inactive comment to see why the log-in became inactive. If the submission was withdrawn or voided, close it in Rhapsody. If it is still active, ask the eSUB log-in team to reactivate the eSUB record. eSUB changes from the last 7 days are skipped. Submissions with a blank Rhapsody status are not checked.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An inactive eSUB log-in means the submission was withdrawn, voided, duplicated or sent in error.",
+        "Rhapsody's submission status 1 means open, and 0 means closed or inactive. The real data shows only these two codes and blanks, but the meaning of each code still needs confirmation.",
+        "A blank Rhapsody status gives no answer, so those submissions are not judged."
+      ]
+    },
+    {
+      "id": "ESUB_RHAP_LOGIN_LINK_MISMATCH",
+      "title": "Rhapsody's eSUB log-in link is wrong or blank",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does each Rhapsody submission link to an active eSUB log-in record with the same STN?",
+      "why_it_matters": "Rhapsody uses this link to pull intake details from eSUB. A blank or wrong link can make reports show another submission's dates and products.",
+      "how_to_fix": "In Rhapsody, find the eSUB log-in record linked to the submission. Compare it with the eSUB log-in records for the STN, listed in the details. Ask the Rhapsody support team to link the correct active record. Records in the 'STN differs' group also appear in 'STN differs: Rhapsody vs linked eSUB record'. Fix them there first. Rhapsody records from the last 3 days are skipped while staff finish data entry.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "When an STN has both inactive and active eSUB log-ins, the active one is the current record. Rhapsody should link to the active one."
+      ]
+    },
+    {
+      "id": "ESUB_RHAP_PRODUCT_COUNT_DIFFERS",
+      "title": "Product count differs: eSUB vs Rhapsody",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "Medium",
+      "what_it_checks": "Does Rhapsody have the same number of products as eSUB for each submission?",
+      "why_it_matters": "Product counts drive workload planning and the published count of products under review. Fewer products in Rhapsody can mean some were never set up for review.",
+      "how_to_fix": "Open the submission in Rhapsody. Compare its product list with the eSUB count and the products listed in the submission itself. Add missing products in Rhapsody or remove ones linked by mistake. If the eSUB count was entered wrong, correct it in eSUB. Submissions received in the last 30 days are skipped, because products are often added after the log-in date. Submissions that Rhapsody marks as rejected are also skipped.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "eSUB's product count is the number of distinct products in the submission when it was logged.",
+        "A blank or zero eSUB product count means the count was not recorded, not that there are no products.",
+        "Rhapsody does not set up products for submissions it marks as rejected.",
+        "Each Rhapsody row with the shared placeholder product ID is a different product. Rhapsody lists each such product once in every product list that has it."
+      ]
+    },
+    {
+      "id": "ESUB_RHAP_RECEIVED_DATE_DIFFERS",
+      "title": "Received date differs: eSUB vs Rhapsody",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does each submission have the same received date in eSUB and Rhapsody?",
+      "why_it_matters": "The received date starts the review clock and sets the reporting period. A mismatch makes deadlines and official counts depend on which system you check.",
+      "how_to_fix": "Check the gateway acknowledgment or date stamp on the official receipt. Correct the system that is wrong. Any difference is flagged, even a single day. A test on the real data showed that both systems record the same calendar date, so a gap is an entry error. Rhapsody records from the last 3 days are skipped while staff finish data entry.",
+      "needs_attention_below_pct": 99,
+      "action_needed_below_pct": 95,
+      "assumptions": []
+    },
+    {
+      "id": "ESUB_RHAP_SAME_LOGIN_DIFFERENT_STN",
+      "title": "STN differs: Rhapsody vs linked eSUB record",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "When a Rhapsody submission points to an eSUB log-in record, do both show the same STN?",
+      "why_it_matters": "Everyone finds a submission by its STN. Different STNs on one log-in send searches and reports to the wrong submission, or they miss it entirely.",
+      "how_to_fix": "Open the eSUB log-in record and the Rhapsody submission side by side. Check the STN on the cover letter or receipt, then correct the system that is wrong. If several Rhapsody submissions point to one log-in, one of them is likely linked to the wrong record.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": []
+    },
+    {
+      "id": "ESUB_RHAP_SUBMITTED_DATE_DIFFERS",
+      "title": "Submitted date differs: eSUB vs Rhapsody",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does each submission have the same submitted date in eSUB and Rhapsody?",
+      "why_it_matters": "The submitted date is the day the company sent the submission. A mismatch makes timing reports and timelines shared with the company unreliable.",
+      "how_to_fix": "Check the date on the cover letter or the gateway acknowledgment. Correct the system that is wrong. A one-day difference is not flagged yet. The received date was tested on the real data and showed no time-zone shift, but the submitted date has not been tested. Rhapsody records from the last 3 days are skipped while staff finish data entry.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Rhapsody's submitted date should equal eSUB's submitted date.",
+        "A time-zone difference may move the submitted date by one day, so a one-day gap is allowed. Only the received date was tested on the real data, and it showed no such shift."
+      ]
+    },
+    {
+      "id": "ESUB_RHAP_TYPE_UNUSUAL",
+      "title": "Rhapsody type unusual for eSUB document type",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does each submission have the usual Rhapsody type for its eSUB document type?",
+      "why_it_matters": "The submission type sets the review pathway and the deadlines. A type that does not fit the eSUB document type is often an entry error.",
+      "how_to_fix": "Compare the eSUB document type and the Rhapsody submission type with the cover letter. Correct the one that is wrong. Some unusual pairs are valid, and those need no change.",
+      "needs_attention_below_pct": 99,
+      "action_needed_below_pct": 97,
+      "assumptions": [
+        "The expected type is the one most submissions of the same eSUB document type have in Rhapsody. It is not an official mapping. A confirmed mapping from the data owners would make the result exact.",
+        "eSUB document types spread over several Rhapsody types, such as amendments, are not checked."
+      ]
+    },
+    {
+      "id": "ESUB_RHAP_SLOW_TO_RHAPSODY",
+      "title": "Submissions slow to reach Rhapsody (over 5 days)",
+      "systems": [
+        "eSUB",
+        "Rhapsody"
+      ],
+      "problem_type": "Timing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Was each submission created in Rhapsody within 5 calendar days of being received?",
+      "why_it_matters": "The review clock starts at receipt. Days lost before a submission appears in Rhapsody cut the time reviewers have before the deadline.",
+      "how_to_fix": "Look at the 'Type of problem' breakdown. 'Late eSUB log-in' points to the intake step. 'Late Rhapsody setup' points to creating the submission in Rhapsody. Raise repeated delays with the team that owns that step. Also confirm the received date is right. Submissions not in Rhapsody at all appear in 'Submissions missing from Rhapsody'.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Rhapsody's created date is the day the submission first appeared in Rhapsody.",
+        "Five calendar days, weekends included, is a reasonable limit. The data owners may prefer another limit or business days.",
+        "Submissions received before Rhapsody was in regular use were loaded into it later and are not late."
+      ]
+    },
+    {
+      "id": "FEED_RHAP_CLEANUP_FAILURES",
+      "title": "Rhapsody clean-up rules whose last run failed",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "clean-up rules",
+      "date_used": "Latest data",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Did every automatic clean-up rule for Rhapsody data succeed the last time it ran?",
+      "why_it_matters": "Clean-up rules fill in standard values (such as the standard submission type or a corrected STN). Reports use these values to group and filter records. A failed rule can leave Rhapsody values blank or out of date.",
+      "how_to_fix": "Send the rule name and its error message to the data engineering team. The flag clears once the rule runs successfully again.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 95,
+      "assumptions": [
+        "A rule counts as a Rhapsody rule when the name of the data it cleans mentions Rhapsody. Runs whose names mention no system are not shown.",
+        "Any status outside the listed success and in-progress values counts as a failure."
+      ]
+    },
+    {
+      "id": "FEED_RHAP_PROCESSING_LOSS",
+      "title": "Rhapsody records lost in processing",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "data feeds",
+      "date_used": "Latest data",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does every record received from Rhapsody reach the processed copy that reports use?",
+      "why_it_matters": "Records from Rhapsody land first in an as-received copy. Processing then builds the version that Reporting and this app read. A record lost between the two steps vanishes from every count without warning.",
+      "how_to_fix": "Tell the data engineering team which Rhapsody feed is flagged and how many records are missing. Include the date of the oldest missing record. If the reason says the records arrived after the last refresh, re-check after the next refresh before you escalate.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Every record in the as-received copy should reach the processed copy. Nothing is filtered out on purpose. Rhapsody temporary working copies are left out, in case processing skips them by design.",
+        "Each pair uses a record ID that means the same thing in both copies. Processing builds each processed copy from the as-received copy in its pair. For Rhapsody, that is the direct Rhapsody copy, not the older CDR archive copy.",
+        "The as-received copy keeps every record it receives and is not emptied after each load. An empty copy means the feed failed.",
+        "Records received after the last processing run are flagged only when there are unusually many. A record received just before an unfinished run can be flagged once. The flag clears when the run ends."
+      ]
+    },
+    {
+      "id": "RHAP_BUNDLE_MISSING_KEY_FIELDS",
+      "title": "Bundles missing dates, type, organization or manager",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "bundles",
+      "date_used": "Bundle received date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does every bundle have a received date, an organization, a recognized type, a project manager and a goal date? The last two apply only to open bundles older than 30 days.",
+      "why_it_matters": "These details place a bundle in the right workload and review-time reports. An open bundle with no goal date never shows as late. One with no project manager has no owner.",
+      "how_to_fix": "Open the bundle in Rhapsody and fill in the blank field. Use the bundle's submissions and their eSUB records as the source. If no project manager or goal date is set yet, ask the review team lead to set it.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Every bundle should have a received date and an organization. It should also have a submission type, even after the review ends.",
+        "Every bundle open for more than 30 days should have a goal date and a project manager. Meeting requests and master files do not need a goal date. Neither does general correspondence.",
+        "A bundle has a project manager when either the project manager name or the linked user is set.",
+        "Bundles marked as duplicates are not real reviews, so they are excluded."
+      ]
+    },
+    {
+      "id": "RHAP_LETTER_NO_BUNDLE",
+      "title": "Letters not linked to an existing bundle",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "letters",
+      "date_used": "Letter issue or upload date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Is every Rhapsody letter linked to a bundle that still exists?",
+      "why_it_matters": "Letters are counted under their bundle. A letter with a missing or deleted bundle drops out of official letter counts. It also loses its tie to the submission it answered.",
+      "how_to_fix": "Find the letter in Rhapsody by its letter ID or file name, and attach it to the right bundle. If its old bundle was deleted on purpose, move the letter to the replacement bundle.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Every letter here should belong to a bundle. Rhapsody keeps meeting and refuse-to-accept letters in a separate place."
+      ]
+    },
+    {
+      "id": "RHAP_LETTER_NO_FILE",
+      "title": "Letters with no file attached",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "letters",
+      "date_used": "Letter issue or upload date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does every Rhapsody letter older than 7 days have its file attached, unless it is marked 'no upload'? Only letter types that almost always have a file are checked.",
+      "why_it_matters": "The attached file is CTP's official copy of the letter. Staff cannot re-send or produce a letter that has no file. The company may also never have received it.",
+      "how_to_fix": "Find the letter in Rhapsody by its letter ID or bundle, and attach the signed letter. If the record has no document, such as a phone call note, mark it 'no upload'. If the record was created by mistake, ask the Rhapsody support team to remove it.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "A letter has a file when any file name field or its document ID has a value.",
+        "A letter type is checked only when it has at least 50 letters and at least 90% of them have a file. Below that share, a missing file is normal for the type.",
+        "Letters of any other type are not checked and do not count toward the pass rate.",
+        "A letter marked 'no upload' has no document on purpose, so it passes. Letters with this mark do not count toward a type's 90% share.",
+        "Letters from the last 7 days may still be in progress, so they are not checked yet."
+      ]
+    },
+    {
+      "id": "RHAP_LETTER_SEND_ERROR",
+      "title": "Letters with a sending or upload error",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "letters",
+      "date_used": "Letter issue or upload date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Did every Rhapsody letter go out without an error message?",
+      "why_it_matters": "A letter with an error may never have reached the company or eSUB. The company's response deadline and CTP's review clock both depend on delivery.",
+      "how_to_fix": "Open the letter in Rhapsody and read the error. Check in eSUB whether the company received it. Fix the cause and resend the letter if it did not arrive. The cause is often a missing file or contact. After it goes out, ask the Rhapsody support team to clear the old error.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "A successful re-send clears the error or creates a new letter record. An error that still shows means the problem is still open.",
+        "A letter whose rule error was bypassed on purpose is not a problem. The same goes for the bulk-upload bypass."
+      ]
+    },
+    {
+      "id": "RHAP_SUB_MISSING_COMPANY_CONTACT_RHPM",
+      "title": "Submissions missing contact details or project manager",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does every Rhapsody submission name the company and a contact person with a usable email? After 30 days, does it also have a project manager?",
+      "why_it_matters": "A blank company hides the submission from company searches and reports. A missing contact or project manager leaves letters with no recipient and the review with no owner.",
+      "how_to_fix": "Open the submission in Rhapsody. Copy the company and contact details from the eSUB / iTRAC record, and fix any mistyped email. If no project manager is assigned, ask the review team lead to assign one.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "CTP assigns a project manager within 30 days of receipt, so newer submissions are not checked for one.",
+        "Submissions with a rejection reason never get a project manager, so they are not flagged for one.",
+        "The contact person fields hold the company's contact for this submission, and every submission should have one."
+      ]
+    },
+    {
+      "id": "RHAP_SUB_MISSING_COUNT_FIELDS",
+      "title": "Submissions missing STN, type, date or organization",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does every Rhapsody submission have an STN, a recognized submission type, a received date and an organization?",
+      "why_it_matters": "These four details place a submission in the right official counts and review clocks. A blank one drops the submission from reports by organization or type. Without a received date, nobody can measure its review time.",
+      "how_to_fix": "Open the submission in Rhapsody and fill in the blank field from the eSUB / iTRAC record. If the type is filled in but not recognized, check its spelling against the standard type list. If it is a new type, ask the data team to add it.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "When a submission has a type but no standard type, the type did not match the standard list. A late update of the standard list is not the cause.",
+        "Every submission should have an organization and a received date once it reaches Rhapsody. Amendments are no exception."
+      ]
+    },
+    {
+      "id": "RHAP_SUB_NO_PRODUCTS",
+      "title": "Submissions with no linked products",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does every Rhapsody submission older than 30 days have a linked product, unless it is marked 'no products'?",
+      "why_it_matters": "Products under review and decisions per product are official metrics. A submission with no linked products is missing from every product count. A submission marked 'no products' that has products drops out the same way.",
+      "how_to_fix": "Open the submission in Rhapsody and compare its product list with the eSUB submission. Link the missing products, or tick 'no products' if the submission truly has none. If it is marked 'no products' but has products, clear the mark.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Staff link products within 30 days of receipt, so newer submissions are not checked yet.",
+        "Meeting requests and master files never list products. General correspondence never does either. Words in the submission type identify these records.",
+        "Submissions with a rejection reason are not expected to have products.",
+        "Amendments should list their own products. If they never do, drop amendments from this check. The 'amendment' problem type shows how many records that affects.",
+        "Products that share the one placeholder product ID are counted once per row. Rhapsody's product wrapper list is taken to repeat links already on the other lists, so only the larger count is used."
+      ]
+    },
+    {
+      "id": "RHAP_SUB_PRODUCT_LINKS_BROKEN",
+      "title": "Submissions linked to missing products or bundles",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Missing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does every Rhapsody product link point to a product and a bundle that exist? Does its STN appear in the submission list?",
+      "why_it_matters": "A link to a missing product or bundle shows as a blank in reports. Product counts per submission and per bundle then come out wrong.",
+      "how_to_fix": "Open the STN in Rhapsody and review its product list. Re-link each missing product from the current product list, since it may have a new product ID. Move links to the right bundle, or remove leftover links. If the STN itself is missing from Rhapsody, report it to the Rhapsody support team.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "A link with a blank bundle is a product not yet placed in a bundle. It is not an error."
+      ]
+    },
+    {
+      "id": "RHAP_BUNDLE_NAME_NONSTANDARD",
+      "title": "Blank or nonstandard bundle names",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "bundles",
+      "date_used": "Bundle received date",
+      "shown_in_app": false,
+      "impact": "Low",
+      "what_it_checks": "Does every bundle have a name that follows the standard naming pattern?",
+      "why_it_matters": "Stewards and reports find bundles by name. A blank or irregular name hides the bundle and can put it in the wrong report group.",
+      "how_to_fix": "Open the bundle in Rhapsody and fix the name to match the standard pattern. Look for a mistyped STN, missing parts, extra spaces or stray characters. If the problem is unclear, ask the data team.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An existing bundle-name rule flags names that break the naming pattern. The pattern itself is not redefined here."
+      ]
+    },
+    {
+      "id": "RHAP_BUNDLE_PRODUCT_COUNT_MISMATCH",
+      "title": "Bundle product count differs from linked products",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "bundles",
+      "date_used": "Bundle received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does each bundle's product count match the number of products linked to it?",
+      "why_it_matters": "Bundle product counts feed workload and large-bundle reports. If the count and the linked products disagree, one of them is wrong. Product totals in reports then cannot be trusted.",
+      "how_to_fix": "Open the bundle in Rhapsody and compare its linked products with the count. Link missing products or move extra ones to the right bundle. If the links are right, update the count to match.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "The product count should equal the number of linked products. Counting each product once or once per submission both pass.",
+        "Bundles marked as duplicates are not real reviews, so they are excluded."
+      ]
+    },
+    {
+      "id": "RHAP_SUB_COMPANY_NAMES_DIFFER",
+      "title": "Conflicting company names on one submission",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Do all the company names on a Rhapsody submission name the same company?",
+      "why_it_matters": "Company reports and searches read different company fields. When the names disagree, reports credit the submission to different companies. Company totals then fail to match.",
+      "how_to_fix": "Open the submission in Rhapsody and compare the company names with the eSUB / iTRAC registration. Correct the wrong one. If the company changed its name or was bought, follow the name-change process so every field changes together.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Each submission stores the company name on its contact record. It also keeps an iTRAC copy and an address book entry. All of these should name the same applicant.",
+        "Names that differ only in punctuation, spacing, capitals or a legal ending such as Inc or LLC are the same company."
+      ]
+    },
+    {
+      "id": "RHAP_SUB_DUPLICATE_STN",
+      "title": "Duplicate STNs in Rhapsody",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "STNs",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does each STN appear only once in Rhapsody's submission list?",
+      "why_it_matters": "A submission listed twice is counted twice in official counts. The copies may also hold different details, so reports can disagree.",
+      "how_to_fix": "Search for the STN in Rhapsody and compare the copies. Keep the correct one and ask the Rhapsody support team to remove or merge the other. Where the copies disagree, use the eSUB record to pick the right details.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Every submission has its own STN, amendments included. One STN should never appear twice.",
+        "Rhapsody keeps one contact person per submission. If it can keep several, copies that differ only by contact are not real duplicates. In that case, drop that problem type."
+      ]
+    },
+    {
+      "id": "FEED_RHAP_FRESHNESS",
+      "title": "Rhapsody feeds overdue for a refresh",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Timing",
+      "counts": "data feeds",
+      "date_used": "Latest data",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Has every Rhapsody data feed refreshed within the last working day?",
+      "why_it_matters": "This app and CTP reports read a copy of Rhapsody that refreshes automatically. When a feed stops, every number that uses it goes out of date without warning.",
+      "how_to_fix": "Tell the data engineering team which Rhapsody feed is flagged and when it last refreshed. Treat Rhapsody numbers as out of date until the team fixes the feed. A single flag on the first working day after a holiday is normal.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Each copy gets new or changed records every working day. A working day with no load means the feed did not run.",
+        "A feed may be flagged once on the first working day after a federal holiday, because nothing changed on the holiday. The flag clears with the next refresh."
+      ]
+    },
+    {
+      "id": "RHAP_BUNDLE_PAST_GOAL_DATE",
+      "title": "Open bundles past their goal date",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Timing",
+      "counts": "open bundles",
+      "date_used": "Goal date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Is every open bundle in Rhapsody within its goal date?",
+      "why_it_matters": "Goal dates are CTP's review performance commitments. An open bundle past its goal date is a late review or a finished review that was never closed. Finished reviews left open make workload and on-time rates look worse than they are.",
+      "how_to_fix": "Open the bundle in Rhapsody. If the review is finished, set the bundle to its final status. Tell the project manager and team lead if the review is still open. Also check whether the goal date should have been extended, for example while CTP waited on the company.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "The goal date already includes any pauses or extensions, such as time spent waiting on the company.",
+        "Bundles marked as duplicates are not real reviews, so they are excluded."
+      ]
+    },
+    {
+      "id": "RHAP_LETTER_DATES_OUT_OF_ORDER",
+      "title": "Letter dates out of order or out of range",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Timing",
+      "counts": "letters",
+      "date_used": "Letter issue or upload date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Was every letter issued after its submission arrived and no later than today? Is the company's response due on or after the issue date?",
+      "why_it_matters": "Letter dates drive review-time metrics and the company's response deadline. A letter date out of order or out of range is an entry error. It gives the company a wrong deadline and skews on-time reports.",
+      "how_to_fix": "Open the letter in Rhapsody. Compare its issue and response due dates with the signed letter and the submission's receipt date. Correct the wrong date.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "A letter for a bundle cannot be issued before the earliest submission in that bundle was received.",
+        "The bundle's received date is the date its first submission arrived.",
+        "A letter's response due date should be on or after its issue date."
+      ]
+    },
+    {
+      "id": "RHAP_SUB_DATES_OUT_OF_ORDER",
+      "title": "Submission dates out of order or out of range",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Timing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Was each submission received no earlier than it was submitted? Is every date no later than today and no earlier than June 22, 2009?",
+      "why_it_matters": "The received date starts the review clock. An out-of-order or impossible date is almost always a typo. It skews review-time metrics and date-based counts.",
+      "how_to_fix": "Open the submission in Rhapsody and compare its dates with the eSUB receipt. Correct the wrong date. Look for a swapped day and month or a wrong year.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "No real CTP submission date is earlier than June 22, 2009."
+      ]
+    },
+    {
+      "id": "RHAP_TASK_OVERDUE",
+      "title": "Open review tasks past their due date",
+      "systems": [
+        "Rhapsody"
+      ],
+      "problem_type": "Timing",
+      "counts": "tasks",
+      "date_used": "Task due date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Is every open review task in Rhapsody still within its due date?",
+      "why_it_matters": "An overdue task holds up its review. Tasks left open after the work is done also clutter inboxes and make workload reports look heavier than they are.",
+      "how_to_fix": "Find the task in Rhapsody by its title and assignee. Complete or cancel it if the work is done. If not, remind the assignee. Their team lead can reassign it.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "A Created or Assigned task with no completion date still needs work, so a passed due date means it is late."
+      ]
+    },
+    {
+      "id": "RHAP_PMS_LINKED_PRODUCT_NOT_IN_PMS",
+      "title": "Linked Rhapsody products missing from PMS",
+      "systems": [
+        "Rhapsody",
+        "PMS"
+      ],
+      "problem_type": "Missing",
+      "counts": "products",
+      "date_used": "Received date (earliest linked submission)",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does every product linked to a submission in Rhapsody exist in PMS?",
+      "why_it_matters": "PMS is the master list of tobacco products. A product that is missing or deleted in PMS drops out of product counts and searches. Reviewers also cannot compare its details with the master record. A product that shares its ID with thousands of other products cannot be matched at all.",
+      "how_to_fix": "Rhapsody's product ID is the product's UUID in PMS, so search PMS by UUID for the ID shown. If PMS has the product under a different UUID, correct the product on the submission in Rhapsody. If someone deleted it in PMS by mistake, ask the PMS team to restore it. If the deletion was on purpose, ask the Rhapsody team to remove it from the submission. 'No PMS reference' means Rhapsody does not say which PMS product it is. 'Placeholder ID' means Rhapsody gives this same ID to many different products, so the ID is listed once for each linked STN. Ask the Rhapsody and PMS teams to give each product its own ID.",
+      "needs_attention_below_pct": 99,
+      "action_needed_below_pct": 95,
+      "assumptions": [
+        "An ID used on more than 100 products is treated as a placeholder and is never used to match products.",
+        "Submission links from Rhapsody's bulk product list count the same as links from its regular product list.",
+        "Product links on a bundle marked deleted in Rhapsody are ignored.",
+        "A product marked inactive in Rhapsody should still exist in PMS. It gets its own category so it can be reviewed separately."
+      ]
+    },
+    {
+      "id": "RHAP_PMS_PMS_PRODUCT_NOT_LINKED_TO_ITS_STN",
+      "title": "PMS products not linked to their STN in Rhapsody",
+      "systems": [
+        "Rhapsody",
+        "PMS"
+      ],
+      "problem_type": "Missing",
+      "counts": "products",
+      "date_used": "Product created date (PMS)",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does Rhapsody link each PMS product to the STN that PMS records, for STN types Rhapsody handles?",
+      "why_it_matters": "Reviewers may miss a product that Rhapsody does not show on its submission. Letters and decisions may then omit it. Product counts per submission will also disagree between the systems.",
+      "how_to_fix": "Open the STN in Rhapsody and review its product list. If the product belongs there, ask the Rhapsody team to add it. They can also re-send the product list from PMS. If PMS has the wrong STN, correct the STN on the product in PMS. 'STN not found' usually means Rhapsody does not have the submission yet, or the STN in PMS has a typo. 'Different STN' products also appear in the check for differing product STNs. 'Placeholder ID' means the PMS product shares its UUID with many other products, so a link cannot be traced. 'No UUID' means the PMS product has no UUID, the ID Rhapsody uses to find it. In both cases ask the PMS team to give the product its own UUID. Only STN types that Rhapsody mostly has are checked. The type is the first two letters of the STN, such as PM. A type is skipped when fewer than half of its PMS STNs are in Rhapsody, since Rhapsody does not handle that type. Products added to PMS in the last 14 days are not checked yet.",
+      "needs_attention_below_pct": 99,
+      "action_needed_below_pct": 95,
+      "assumptions": [
+        "An ID used on more than 100 products is treated as a placeholder and is never used to match products.",
+        "The STN on a PMS product identifies the product's original submission. Rhapsody should list the product on that submission.",
+        "Rhapsody handles an STN type when at least 50% of the PMS STNs of that type are in Rhapsody. The type is the first two letters of the STN. Products of other types are not checked.",
+        "A new PMS product should be linked to its submission in Rhapsody within 14 days.",
+        "Submission links from Rhapsody's bulk product list count the same as links from its regular product list.",
+        "Product links on a bundle marked deleted in Rhapsody are ignored."
+      ]
+    },
+    {
+      "id": "RPT_RHAP_BUNDLES_NOT_IN_BOTH",
+      "title": "Bundles missing from Rhapsody or Reporting",
+      "systems": [
+        "Rhapsody",
+        "Reporting"
+      ],
+      "problem_type": "Missing",
+      "counts": "bundles",
+      "date_used": "Bundle received date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does every active Rhapsody bundle appear in Reporting, and does Reporting show only bundles still active in Rhapsody?",
+      "why_it_matters": "Dashboards that track workload and goal dates count bundles from Reporting. A missing bundle hides work and deadlines. A bundle deleted in Rhapsody but still active in Reporting inflates the counts.",
+      "how_to_fix": "Find the bundle in Rhapsody by its ID or name. If it is active there but missing from Reporting, send the bundle ID to the Reporting (EDW) team. Ask that team to remove or flag any bundle deleted in Rhapsody on purpose. A bundle found only in Reporting may have been split or replaced in Rhapsody.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "A bundle marked deleted in Rhapsody should either be absent from Reporting or also marked deleted there.",
+        "Rhapsody 'temporary copy' records are editing copies, not real bundles."
+      ]
+    },
+    {
+      "id": "RPT_RHAP_LETTERS_NOT_IN_REPORTING",
+      "title": "Letters missing from Reporting or kept after deletion",
+      "systems": [
+        "Rhapsody",
+        "Reporting"
+      ],
+      "problem_type": "Missing",
+      "counts": "letters",
+      "date_used": "Letter date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does every active Rhapsody letter or communication appear in Reporting, and are letters deleted in Rhapsody gone from Reporting too?",
+      "why_it_matters": "Letter counts and review-decision metrics come from Reporting. A missing letter drops out of those numbers and searches. A deleted letter left in Reporting gets counted by mistake.",
+      "how_to_fix": "Open the bundle in Rhapsody and find the letter by its file name or issue date. If it is active in Rhapsody but missing from Reporting, tell the Reporting (EDW) team. Include the letter ID with its bundle ID. If someone deleted it in Rhapsody on purpose, ask that team to remove it from Reporting too. If almost every flagged letter has no issue date, Reporting may take only issued letters by design. Confirm this with the Reporting team.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Reporting should take every Rhapsody letter, even unissued ones. Letters with no issue date get their own category, in case Reporting skips them by design.",
+        "Reporting may also load Rhapsody's separate meeting records, so letters found only in Reporting are not flagged."
+      ]
+    },
+    {
+      "id": "RPT_RHAP_SUBMISSIONS_NOT_IN_BOTH",
+      "title": "Submissions missing from Rhapsody or Reporting",
+      "systems": [
+        "Rhapsody",
+        "Reporting"
+      ],
+      "problem_type": "Missing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does every active Rhapsody submission appear in Reporting, and does Reporting show only submissions still active in Rhapsody?",
+      "why_it_matters": "Official submission counts and dashboards come from Reporting. A submission missing there drops out of the numbers. A submission removed from Rhapsody but still in Reporting gets counted by mistake.",
+      "how_to_fix": "Find the STN in Rhapsody. If it is active there but missing from Reporting, send the STN to the Reporting (EDW) team so the next refresh adds it. If someone removed it in Rhapsody on purpose, ask the Reporting team to remove it too. An STN found only in Reporting may have been mistyped or merged in Rhapsody, because Reporting takes every submission from Rhapsody. Submissions that exist only in eSUB are not expected in Reporting and are not checked here.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Reporting refreshes at least daily, so a 2-day grace period for brand-new submissions is enough."
+      ]
+    },
+    {
+      "id": "RPT_RHAP_SUBMISSION_PRODUCT_COUNTS_DIFFER",
+      "title": "Product counts differ: Rhapsody vs Reporting",
+      "systems": [
+        "Rhapsody",
+        "Reporting"
+      ],
+      "problem_type": "Missing",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does each submission have the same number of products in Reporting as in Rhapsody?",
+      "why_it_matters": "Product counts per submission are an official CTP metric and drive workload reports. When Reporting has missing or extra products, every count that uses them is wrong.",
+      "how_to_fix": "Open the submission in Rhapsody and count its products, including any bulk product list. If Rhapsody has products attached by mistake, correct them in Rhapsody. If the submission itself is missing from Reporting, fix that first using the submissions check. If Rhapsody is right, send the STN with both counts to the Reporting (EDW) team. If someone added products in Rhapsody today, re-check after the overnight refresh. Products that share a placeholder ID are left out of both counts, and the number left out is shown.",
+      "needs_attention_below_pct": 99,
+      "action_needed_below_pct": 95,
+      "assumptions": [
+        "Reporting takes the products on each submission from the Rhapsody product list and bulk product lists.",
+        "It is not confirmed whether Reporting counts bulk-list products, so either count passes.",
+        "Inactive entries in bulk product lists still count. The meaning of the bulk list's active field is not yet confirmed.",
+        "A product ID shared by more than 100 product records is a placeholder, not one product. Products that carry it are left out of both counts."
+      ]
+    },
+    {
+      "id": "RHAP_PMS_CATEGORY_DIFFERS",
+      "title": "Category or subcategory differs: Rhapsody vs PMS",
+      "systems": [
+        "Rhapsody",
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does each product have the same category and subcategory in Rhapsody and PMS?",
+      "why_it_matters": "Category and subcategory decide how reports group products (for example cigarettes versus e-cigarettes). A mismatch makes counts by product type differ between the two systems.",
+      "how_to_fix": "Compare the two values in the details. PMS is the master record, so correct whichever system is wrong. If the same pair of values shows on many products, the systems probably word the category differently. Tell the data team, who can add a translation instead of fixing products one by one.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An ID used on more than 100 products is treated as a placeholder and is never used to match products.",
+        "The comparison looks only at letters and digits, ignoring capital letters. 'N/A', 'not provided', 'not applicable' and 'none provided' count as blank. Rhapsody's value matches when it equals the PMS code or the PMS name for that code. It also matches the 'other' description entered in PMS. Different wording for the same thing still counts as a difference. For example 'Tobacco' does not match 'Tobacco-derived'.",
+        "Products with no PMS details record are skipped. The PMS check for missing details records reports them.",
+        "Submission links from Rhapsody's bulk product list count the same as links from its regular product list."
+      ]
+    },
+    {
+      "id": "RHAP_PMS_FLAVOR_DIFFERS",
+      "title": "Flavor differs: Rhapsody vs PMS",
+      "systems": [
+        "Rhapsody",
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does each product have the same characterizing flavor in Rhapsody and PMS?",
+      "why_it_matters": "Flavor drives review and enforcement priorities (for example flavored e-cigarettes). Flavor reports and searches miss or miscount products when the two systems disagree.",
+      "how_to_fix": "Compare both flavors with the submission documents. PMS is the master record, so correct whichever system is wrong. If the same pair of values shows on many products, the systems probably word the flavor differently. Tell the data team, who can add a translation.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An ID used on more than 100 products is treated as a placeholder and is never used to match products.",
+        "The comparison looks only at letters and digits, ignoring capital letters. 'N/A', 'not provided', 'not applicable' and 'none provided' count as blank. Rhapsody's value matches when it equals the PMS code or the PMS name for that code. It also matches the 'other' description entered in PMS. Different wording for the same thing still counts as a difference. For example 'Tobacco' does not match 'Tobacco-derived'.",
+        "Products with no PMS details record are skipped. The PMS check for missing details records reports them.",
+        "Submission links from Rhapsody's bulk product list count the same as links from its regular product list."
+      ]
+    },
+    {
+      "id": "RHAP_PMS_NICOTINE_SOURCE_DIFFERS",
+      "title": "Nicotine source differs: Rhapsody vs PMS",
+      "systems": [
+        "Rhapsody",
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does each product have the same nicotine source in Rhapsody and PMS?",
+      "why_it_matters": "Nicotine source (for example tobacco-derived versus non-tobacco nicotine) affects how a product is regulated and reported. If the systems disagree, reviewers may work from the wrong product description.",
+      "how_to_fix": "Compare both values with the submission documents. PMS is the master record, so correct whichever system is wrong. If the same pair of values shows on many products, the systems probably word the source differently. Tell the data team, who can add a translation.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An ID used on more than 100 products is treated as a placeholder and is never used to match products.",
+        "Rhapsody may store the nicotine source as a PMS code or as its name. A code is translated to its name with the PMS list before the comparison.",
+        "The comparison looks only at letters and digits, ignoring capital letters. 'N/A', 'not provided', 'not applicable' and 'none provided' count as blank. Rhapsody's value matches when it equals the PMS code or the PMS name for that code. It also matches the 'other' description entered in PMS. Different wording for the same thing still counts as a difference. For example 'Tobacco' does not match 'Tobacco-derived'.",
+        "Submission links from Rhapsody's bulk product list count the same as links from its regular product list."
+      ]
+    },
+    {
+      "id": "RHAP_PMS_PACKAGE_DIFFERS",
+      "title": "Package type or quantity differs: Rhapsody vs PMS",
+      "systems": [
+        "Rhapsody",
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does each product have the same package type and quantity in Rhapsody and PMS?",
+      "why_it_matters": "Package type and quantity (for example a soft pack of 20 versus a box of 10) help identify a product. When Rhapsody and PMS disagree, letters may describe a product that differs from the master record.",
+      "how_to_fix": "Compare the package values with the submission documents. PMS is the master record. If PMS is right, ask the Rhapsody team to refresh the product from PMS. If PMS is wrong, ask the PMS team to correct it. If the same pair of package types shows on many products, the systems probably word the type differently. Tell the data team, who can add a translation.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An ID used on more than 100 products is treated as a placeholder and is never used to match products.",
+        "Rhapsody's package type and quantity are copies of the PMS values.",
+        "Package quantities are compared by number only. Units such as sticks or grams are not compared.",
+        "The comparison looks only at letters and digits, ignoring capital letters. 'N/A', 'not provided', 'not applicable' and 'none provided' count as blank. Rhapsody's value matches when it equals the PMS code or the PMS name for that code. It also matches the 'other' description entered in PMS. Different wording for the same thing still counts as a difference. For example 'Tobacco' does not match 'Tobacco-derived'.",
+        "Products with no PMS details record are skipped. The PMS check for missing details records reports them.",
+        "Submission links from Rhapsody's bulk product list count the same as links from its regular product list."
+      ]
+    },
+    {
+      "id": "RHAP_PMS_PRODUCT_NAME_DIFFERS",
+      "title": "Product name differs: Rhapsody vs PMS",
+      "systems": [
+        "Rhapsody",
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": true,
+      "impact": "Medium",
+      "what_it_checks": "Does each product have the same name in Rhapsody and PMS?",
+      "why_it_matters": "Letters and decisions use the product name shown in Rhapsody. If it differs from the PMS master record, a letter can name the product wrongly. Searches by name also give different results in each system.",
+      "how_to_fix": "Compare the two names in the details. PMS is the master record. If PMS is right, ask the Rhapsody team to refresh the product from PMS. If PMS is wrong, ask the PMS team to correct it. Differences in capital letters or extra spaces alone are not flagged.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An ID used on more than 100 products is treated as a placeholder and is never used to match products.",
+        "Submission links from Rhapsody's bulk product list count the same as links from its regular product list."
+      ]
+    },
+    {
+      "id": "RHAP_PMS_PRODUCT_STN_DIFFERS",
+      "title": "Product STN differs: Rhapsody vs PMS",
+      "systems": [
+        "Rhapsody",
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does Rhapsody link each product to the STN that PMS records for it?",
+      "why_it_matters": "The STN identifies the submission that included the product. If PMS and Rhapsody disagree, the product is counted under the wrong submission. A search by STN also returns different products in each system.",
+      "how_to_fix": "Check the submission documents to find the product's correct STN. Then correct whichever system is wrong: the STN on the product in PMS, or the product's submission link in Rhapsody. 'Blank STN' means the PMS product has no STN.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An ID used on more than 100 products is treated as a placeholder and is never used to match products.",
+        "PMS records one STN per product, the product's original submission. A product that Rhapsody links to several submissions passes when PMS's STN is one of them.",
+        "Submission links from Rhapsody's bulk product list count the same as links from its regular product list.",
+        "Product links on a bundle marked deleted in Rhapsody are ignored."
+      ]
+    },
+    {
+      "id": "RHAP_PMS_TP_NUMBER_DIFFERS",
+      "title": "TP number differs: Rhapsody vs PMS",
+      "systems": [
+        "Rhapsody",
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does each product have the same TP number in Rhapsody and PMS?",
+      "why_it_matters": "The TP number identifies the product. If it differs, a TP number search finds the product in one system only. Matching records between the systems also becomes unreliable.",
+      "how_to_fix": "Compare the two TP numbers in the details. PMS is the master record. If PMS is right, ask the Rhapsody team to refresh the product from PMS. If PMS is wrong or blank, ask the PMS team to correct it. Differences in capital letters or extra spaces alone are not flagged.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An ID used on more than 100 products is treated as a placeholder and is never used to match products.",
+        "Submission links from Rhapsody's bulk product list count the same as links from its regular product list."
+      ]
+    },
+    {
+      "id": "RPT_RHAP_BUNDLE_DETAILS_DIFFER",
+      "title": "Bundle details differ: Rhapsody vs Reporting",
+      "systems": [
+        "Rhapsody",
+        "Reporting"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "bundles",
+      "date_used": "Bundle received date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "For bundles in both systems, do the status, dates, name, organization and submission type in Reporting match Rhapsody?",
+      "why_it_matters": "Deadline tracking and review reports rely on bundle status and goal dates. If Reporting shows an old status or goal date, managers see the wrong deadlines.",
+      "how_to_fix": "Open the bundle in Rhapsody and compare it with the values shown. Rhapsody is the system of record. If Rhapsody is right, send the bundle ID to the Reporting (EDW) team with the fields that differ. If Rhapsody changed today, re-check after the overnight refresh.",
+      "needs_attention_below_pct": 99,
+      "action_needed_below_pct": 95,
+      "assumptions": [
+        "Reporting copies these bundle fields from Rhapsody unchanged.",
+        "A time-zone conversion in Reporting may still shift goal dates by up to one day. Larger gaps are real differences."
+      ]
+    },
+    {
+      "id": "RPT_RHAP_SUBMISSION_DETAILS_DIFFER",
+      "title": "Submission details differ: Rhapsody vs Reporting",
+      "systems": [
+        "Rhapsody",
+        "Reporting"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "submissions",
+      "date_used": "Received date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "For submissions in both systems, do the dates, type, status, organization and company in Reporting match Rhapsody?",
+      "why_it_matters": "Reporting should be an exact copy of Rhapsody. A wrong date in Reporting skews review-time metrics. A wrong type or status skews the counts that dashboards show, even when Rhapsody is right.",
+      "how_to_fix": "Compare the values side by side. Rhapsody is the system of record. If Rhapsody is right, send the STN to the Reporting (EDW) team with the fields that differ. If Rhapsody changed today, re-check after the overnight refresh. If Rhapsody is wrong, correct it there.",
+      "needs_attention_below_pct": 99,
+      "action_needed_below_pct": 95,
+      "assumptions": [
+        "Reporting copies these fields from Rhapsody unchanged. Any difference is a refresh or load problem, not an intended change.",
+        "In both systems the company shown is the company-record name. When that is blank, it falls back to the iTRAC company, then the ABC company.",
+        "A blank status means Rhapsody has not marked the submission open or closed yet."
+      ]
+    },
+    {
+      "id": "RHAP_PMS_RHAPSODY_COPY_OUT_OF_DATE",
+      "title": "Rhapsody product copy missing latest PMS change",
+      "systems": [
+        "Rhapsody",
+        "PMS"
+      ],
+      "problem_type": "Timing",
+      "counts": "products",
+      "date_used": "Last changed in PMS",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does Rhapsody have the latest PMS changes for each product?",
+      "why_it_matters": "Rhapsody keeps its own copy of each product's PMS details. Letters and reports in Rhapsody show old details when that copy falls behind PMS.",
+      "how_to_fix": "Compare the product in both systems. If PMS has newer details, ask the Rhapsody team to refresh the product from PMS. If many products fell behind on the same date, the automatic PMS refresh has probably stopped. Report it to the data team instead of fixing products one by one. PMS changes from the last 2 days are not flagged yet.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "An ID used on more than 100 products is treated as a placeholder and is never used to match products.",
+        "Rhapsody's 'PMS updated' date is assumed to be the PMS change date when Rhapsody last copied the product. A later change in PMS means the copy is out of date.",
+        "Differences of 1 day or less are allowed for time zones. PMS changes from the last 2 days get time to reach Rhapsody.",
+        "Submission links from Rhapsody's bulk product list count the same as links from its regular product list."
+      ]
+    },
+    {
+      "id": "FEED_PMS_CLEANUP_FAILURES",
+      "title": "PMS clean-up rules whose last run failed",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Missing",
+      "counts": "clean-up rules",
+      "date_used": "Latest data",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Did every automatic clean-up rule for PMS data succeed the last time it ran?",
+      "why_it_matters": "Clean-up rules fill in standard values (such as the standard submission type or a corrected STN). Reports use these values to group and filter records. A failed rule can leave PMS values blank or out of date.",
+      "how_to_fix": "Send the rule name and its error message to the data engineering team. The flag clears once the rule runs successfully again.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 95,
+      "assumptions": [
+        "A rule counts as a PMS rule when the name of the data it cleans mentions PMS. Runs whose names mention no system are not shown.",
+        "Any status outside the listed success and in-progress values counts as a failure."
+      ]
+    },
+    {
+      "id": "FEED_PMS_PROCESSING_LOSS",
+      "title": "PMS records lost in processing",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Missing",
+      "counts": "data feeds",
+      "date_used": "Latest data",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Does every record received from PMS reach the processed copy that reports use?",
+      "why_it_matters": "Records from PMS land first in an as-received copy. Processing then builds the version that Reporting and this app read. A record lost between the two steps vanishes from every count without warning.",
+      "how_to_fix": "Tell the data engineering team which PMS feed is flagged and how many records are missing. Include the date of the oldest missing record. If the reason says the records arrived after the last refresh, re-check after the next refresh before you escalate.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Every record in the as-received copy should reach the processed copy. Nothing is filtered out on purpose. Rhapsody temporary working copies are left out, in case processing skips them by design.",
+        "Each pair uses a record ID that means the same thing in both copies. Processing builds each processed copy from the as-received copy in its pair. For Rhapsody, that is the direct Rhapsody copy, not the older CDR archive copy.",
+        "The as-received copy keeps every record it receives and is not emptied after each load. An empty copy means the feed failed.",
+        "Records received after the last processing run are flagged only when there are unusually many. A record received just before an unfinished run can be flagged once. The flag clears when the run ends."
+      ]
+    },
+    {
+      "id": "PMS_PRODUCT_DETAILS_RECORD_MISSING",
+      "title": "PMS products missing their details record",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Missing",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "High",
+      "what_it_checks": "Is every PMS product linked to a details record that still exists?",
+      "why_it_matters": "Each PMS product links to a details record that holds its category and flavor. Without that record the product has no category. It is then left out of official counts by category or counted in the wrong one.",
+      "how_to_fix": "Open the product in PMS and look at its category and flavor. If they are empty or the page shows an error, contact the PMS product team. Send them the PD number and the details record number shown here. They can relink the product or restore the deleted record.",
+      "needs_attention_below_pct": 99.5,
+      "action_needed_below_pct": 98,
+      "assumptions": [
+        "Stewards find products in PMS by PD number. The ID shown is the PD number, else the TP number, else the static product ID, else the PMS record number.",
+        "A product takes its submission type and organization from the Rhapsody submission with the same STN. If Rhapsody has no such STN, both show as not recorded.",
+        "Every product should have a details record."
+      ]
+    },
+    {
+      "id": "PMS_PRODUCT_MISSING_NAME_BRAND_MAKER",
+      "title": "PMS products with blank name or maker fields",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Missing",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does every PMS product have a name and brand, plus a manufacturer?",
+      "why_it_matters": "Reviewers and public product lists find products by name and brand. A blank or placeholder value such as 'N/A' makes the product hard to find and leaves gaps in manufacturer reports.",
+      "how_to_fix": "Open the product in PMS. Copy each missing value from the product list in the original submission (eSUB or Rhapsody). Replace placeholders such as 'N/A' with the real value. If the company did not supply a value, say so in the PMS comments. Then ask the review team whether to request it.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Stewards find products in PMS by PD number. The ID shown is the PD number, else the TP number, else the static product ID, else the PMS record number.",
+        "A product takes its submission type and organization from the Rhapsody submission with the same STN. If Rhapsody has no such STN, both show as not recorded.",
+        "Every product should have all three fields. If PMS began collecting brand and manufacturer on a set date, start the date filter on that date.",
+        "Values such as N/A, NONE, UNKNOWN, TBD, NOT PROVIDED, '-', '?' or '0' are placeholders, not real names."
+      ]
+    },
+    {
+      "id": "PMS_PRODUCT_NO_STN_OR_STATIC_ID",
+      "title": "PMS products missing a valid STN or static ID",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Missing",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does every PMS product have a valid STN and a static product ID?",
+      "why_it_matters": "The STN ties a product to its submission. The static product ID identifies the product across its versions in PMS. A missing value drops the product out of submission counts and makes it hard to find.",
+      "how_to_fix": "Search PMS for the PD number or product name shown. Find the submission in eSUB or Rhapsody and copy its STN exactly as written there. A valid STN is letters followed by digits, such as PM0001234. If the static product ID is blank, ask the PMS product team to generate one. Do not type it by hand.",
+      "needs_attention_below_pct": 99,
+      "action_needed_below_pct": 95,
+      "assumptions": [
+        "Stewards find products in PMS by PD number. The ID shown is the PD number, else the TP number, else the static product ID, else the PMS record number.",
+        "Every PMS product needs an STN and a static product ID. That includes bulk and co-bundled products. The Product source field is shown so any group of products with a valid reason to have no STN is easy to spot.",
+        "A valid STN is two to four letters followed by four to ten digits. A short suffix after a dot or dash is allowed. The rule is loose on purpose. It catches only clearly wrong values such as 'N/A' or two STNs typed into one field."
+      ]
+    },
+    {
+      "id": "PMS_PRODUCT_ATTRIBUTE_CONFLICT",
+      "title": "PMS measurements with a bad value or no unit",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "When a PMS product measurement has a value, is it a usable number with a unit?",
+      "why_it_matters": "Product comparisons and nicotine reports use these measurements. A value that is negative, has no unit, is not a number, or is marked 'not provided' skews those reports.",
+      "how_to_fix": "Open the product in PMS. Compare the measurement named in the reason with the product details in the submission. Clear the 'not provided' box or remove the value, whichever is wrong. Choose the missing unit, or type it when the unit is 'Other'. Enter only the number in the number box, for example 5 with the unit mg/mL.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Stewards find products in PMS by PD number. The ID shown is the PD number, else the TP number, else the static product ID, else the PMS record number.",
+        "A product takes its submission type and organization from the Rhapsody submission with the same STN. If Rhapsody has no such STN, both show as not recorded.",
+        "A value of 0 next to a 'not provided' mark is a filler, not a contradiction.",
+        "Measurement values should be plain numbers, with the unit chosen separately. A value such as '5%' or 'about 2 g' counts as not a number. Commas are ignored, so '1,000' is 1000.",
+        "When the unit is 'Other', the typed unit description is the unit."
+      ]
+    },
+    {
+      "id": "PMS_PRODUCT_CATEGORY_NOT_RECOGNIZED",
+      "title": "PMS products with no valid category or subcategory",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does every PMS product have a category and subcategory from the approved PMS lists?",
+      "why_it_matters": "Official counts and dashboards by product type depend on the category. A blank or unknown category drops the product from those counts or puts it in the wrong group. An 'Other' category with no description cannot be classified at all.",
+      "how_to_fix": "Open the product in PMS. Pick the right category and subcategory from the drop-down, based on the product description in the submission. If the value is not in the drop-down, report it to the PMS product team. Also report a retired value that still appears on new products. When you choose 'Other', type a short description of the product type.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Stewards find products in PMS by PD number. The ID shown is the PD number, else the TP number, else the static product ID, else the PMS record number.",
+        "A product takes its submission type and organization from the Rhapsody submission with the same STN. If Rhapsody has no such STN, both show as not recorded.",
+        "A product needs a subcategory whenever other products in its category have one. If no product in a category has a subcategory, we assume PMS has no subcategories for that category.",
+        "A retired category is a problem only on products created after it was retired. Older products keep the category that was valid at the time.",
+        "The 'Other' choice in the PMS lists has the code OTHER or the name 'Other'. The name may carry a note in parentheses or after a dash. A real choice whose name only starts with 'Other' is not treated as 'Other'."
+      ]
+    },
+    {
+      "id": "PMS_PRODUCT_FLAVOR_NOT_RECOGNIZED",
+      "title": "PMS products with no valid flavor",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Does every PMS product have a flavor from the PMS list, with a description when 'Other' is chosen?",
+      "why_it_matters": "Flavor is part of the product's regulatory record. Flavored-product reports and reviews rely on it. A blank or unknown flavor leaves the product out of those reports or puts it in the wrong group.",
+      "how_to_fix": "Open the product in PMS and pick the flavor from the drop-down, based on the product description in the submission. If the company did not state a flavor, check the 'not provided' box instead of leaving it blank. If the flavor is not in the drop-down, report it to the PMS product team. When you choose 'Other', type the flavor in the description box.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Stewards find products in PMS by PD number. The ID shown is the PD number, else the TP number, else the static product ID, else the PMS record number.",
+        "A product takes its submission type and organization from the Rhapsody submission with the same STN. If Rhapsody has no such STN, both show as not recorded.",
+        "A blank flavor is a problem only in categories where other products have a flavor. If no product in a category has one, we assume PMS does not collect flavor there.",
+        "Checking the 'flavor not provided' box is a valid answer and is not flagged."
+      ]
+    },
+    {
+      "id": "PMS_PRODUCT_NAME_LOOKS_WRONG",
+      "title": "PMS product names that look wrong",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Is every PMS product name readable and accepted by the automatic name check?",
+      "why_it_matters": "Letters and public product lists show the product name. Hidden characters print badly on letters. A name that is only an ID will not match the same product in Rhapsody or eSUB.",
+      "how_to_fix": "Open the product in PMS and compare its name with the product list in the submission. Retype the name if it has odd symbols or line breaks. If the name is only a number or ID, replace it with the real product name.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Stewards find products in PMS by PD number. The ID shown is the PD number, else the TP number, else the static product ID, else the PMS record number.",
+        "A product takes its submission type and organization from the Rhapsody submission with the same STN. If Rhapsody has no such STN, both show as not recorded.",
+        "The 'product name contains error' flag comes from the automatic clean-up that runs when PMS data is copied for reporting. A flagged name needs a steward's review. The data engineering team owns the exact rule.",
+        "A name made of five or more digits, such as '1234567', is an ID typed into the name box. Short number names such as the cigarette brand '1839' are not flagged."
+      ]
+    },
+    {
+      "id": "PMS_PRODUCT_POSSIBLE_DUPLICATE",
+      "title": "Duplicate PMS products on the same STN",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does each product appear only once on its STN in PMS?",
+      "why_it_matters": "A product entered twice on one submission counts twice in product totals. The two copies can also end up with different decisions on record.",
+      "how_to_fix": "Open the STN in PMS and compare the PMS records shown here. If they are the same product, keep the record linked in Rhapsody. Ask the PMS product team to retire the other one. If they share a PD number but are different products, ask the PMS product team to give each its own PD number.",
+      "needs_attention_below_pct": 99.5,
+      "action_needed_below_pct": 98,
+      "assumptions": [
+        "Stewards find products in PMS by PD number. The ID shown is the PD number, else the TP number, else the static product ID, else the PMS record number.",
+        "A product takes its submission type and organization from the Rhapsody submission with the same STN. If Rhapsody has no such STN, both show as not recorded.",
+        "Two products on one STN are the same product entered twice when they share a details record and their names match. Names match when they have the same letters and digits in the same order. Products with the same name but different details, such as a different nicotine strength, count as different products.",
+        "Each PMS record is a separate product listing, not an older version kept alongside the current one."
+      ]
+    },
+    {
+      "id": "FEED_PMS_FRESHNESS",
+      "title": "PMS feeds overdue for a refresh",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Timing",
+      "counts": "data feeds",
+      "date_used": "Latest data",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Has every PMS data feed refreshed within the last working day?",
+      "why_it_matters": "This app and CTP reports read a copy of PMS that refreshes automatically. When a feed stops, every number that uses it goes out of date without warning.",
+      "how_to_fix": "Tell the data engineering team which PMS feed is flagged and when it last refreshed. Treat PMS numbers as out of date until the team fixes the feed. A single flag on the first working day after a holiday is normal.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Each copy gets new or changed records every working day. A working day with no load means the feed did not run.",
+        "A feed may be flagged once on the first working day after a federal holiday, because nothing changed on the holiday. The flag clears with the next refresh."
+      ]
+    },
+    {
+      "id": "PMS_PRODUCT_DATES_IMPOSSIBLE",
+      "title": "PMS products with a missing or impossible date",
+      "systems": [
+        "PMS"
+      ],
+      "problem_type": "Timing",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "Are the dates on every PMS product believable and in the right order?",
+      "why_it_matters": "The created date sets which reporting period includes the product. The first-marketed date affects which marketing pathway applies. An impossible date points to a typo or a bad data load and puts the product in the wrong period.",
+      "how_to_fix": "Open the product in PMS. Compare its dates with the received date in eSUB or Rhapsody and with the first-marketed date in the submission. If the first-marketed date was mistyped, correct it in PMS. PMS sets the created and last-updated dates itself. If one of them is wrong, send the PD number to the PMS product team.",
+      "needs_attention_below_pct": 98,
+      "action_needed_below_pct": 90,
+      "assumptions": [
+        "Stewards find products in PMS by PD number. The ID shown is the PD number, else the TP number, else the static product ID, else the PMS record number.",
+        "A product takes its submission type and organization from the Rhapsody submission with the same STN. If Rhapsody has no such STN, both show as not recorded.",
+        "The first-marketed date is when the product went on sale in the US. It is not a planned launch date, so it should never be in the future.",
+        "PMS sets the created and last-updated dates when a record is saved. No PMS product can have a created date before the Tobacco Control Act of June 22, 2009."
+      ]
+    },
+    {
+      "id": "RPT_PMS_PRODUCTS_NOT_IN_BOTH",
+      "title": "Products missing from PMS or Reporting",
+      "systems": [
+        "PMS",
+        "Reporting"
+      ],
+      "problem_type": "Missing",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Does every active PMS product appear in Reporting, and does Reporting show only products still active in PMS?",
+      "why_it_matters": "Official product counts by category and company come from Reporting. A product missing there drops out of the counts. A product removed from PMS but still in Reporting gets counted by mistake.",
+      "how_to_fix": "Search PMS for the product ID or TP number. If it is active in PMS but missing from Reporting, send the product ID to the Reporting (EDW) team. If someone removed it from PMS on purpose, ask that team to remove it from Reporting too.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": []
+    },
+    {
+      "id": "RPT_PMS_PRODUCT_DETAILS_DIFFER",
+      "title": "Product details differ: PMS vs Reporting",
+      "systems": [
+        "PMS",
+        "Reporting"
+      ],
+      "problem_type": "Doesn't match",
+      "counts": "products",
+      "date_used": "Product created date",
+      "shown_in_app": false,
+      "impact": "Medium",
+      "what_it_checks": "For products in both systems, do the name, TP number, STN, category and subcategory in Reporting match PMS?",
+      "why_it_matters": "Reports group products by category and find them by STN or TP number. When Reporting holds an old or different value, counts by category go wrong. Searches miss the product too.",
+      "how_to_fix": "Open the product in PMS and compare it with the values shown. PMS is the system of record. If PMS is right, send the product ID to the Reporting (EDW) team with the fields that differ. If someone corrected PMS today, re-check after the overnight refresh.",
+      "needs_attention_below_pct": 99,
+      "action_needed_below_pct": 95,
+      "assumptions": [
+        "Reporting's category and subcategory codes come from the PMS unique-product record linked to the product.",
+        "Reporting copies these fields from PMS unchanged."
+      ]
+    },
+    {
+      "id": "FEED_EDW_FRESHNESS",
+      "title": "Reporting feeds overdue for a refresh",
+      "systems": [
+        "Reporting"
+      ],
+      "problem_type": "Timing",
+      "counts": "data feeds",
+      "date_used": "Latest data",
+      "shown_in_app": true,
+      "impact": "High",
+      "what_it_checks": "Has every Reporting data feed refreshed within the last working day?",
+      "why_it_matters": "This app and CTP reports read a copy of Reporting that refreshes automatically. When a feed stops, every number that uses it goes out of date without warning.",
+      "how_to_fix": "Tell the data engineering team which Reporting feed is flagged and when it last refreshed. Treat Reporting numbers as out of date until the team fixes the feed. A single flag on the first working day after a holiday is normal.",
+      "needs_attention_below_pct": 99.9,
+      "action_needed_below_pct": 99,
+      "assumptions": [
+        "Each copy gets new or changed records every working day. A working day with no load means the feed did not run.",
+        "A feed may be flagged once on the first working day after a federal holiday, because nothing changed on the holiday. The flag clears with the next refresh."
+      ]
+    }
+  ]
+}

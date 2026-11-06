@@ -14,8 +14,9 @@ from datetime import datetime
 import pandas as pd
 import streamlit as st
 
-from dq import db, engine
+from dq import db, engine, rules
 from dq.checks import ALL_CHECKS, CHECKS_BY_ID
+from dq.checks.core import active_checks
 from dq.engine import Filters, Summary
 from dq.model import SEVERITIES, Check, status_for
 from dq.settings import SETTINGS
@@ -52,6 +53,33 @@ def identity() -> str:
     if not tok:
         return "app"
     return viewer_email() or hashlib.sha256(tok.encode()).hexdigest()[:16]
+
+
+# --------------------------------------------------------------------------- #
+# Rules: wording and limits from the workspace rule file, when DQ_RULES_PATH is set
+# --------------------------------------------------------------------------- #
+
+RULES_TTL_MINUTES = 10
+
+
+@st.cache_data(ttl=RULES_TTL_MINUTES * 60, show_spinner=False)
+def _rule_source(path: str, nonce: int) -> rules.RuleSource:
+    return rules.load(path)
+
+
+def rule_source() -> rules.RuleSource:
+    """Read again every few minutes, and on "Re-run all checks", so workspace edits show without a redeploy."""
+    return _rule_source(SETTINGS.rules_path, st.session_state.get("refresh_nonce", 0))
+
+
+def checks_in_app() -> list[Check]:
+    """The checks the app shows, with any wording and limits from the rule file."""
+    source = rule_source()
+    return [rules.apply(c, source) for c in active_checks()]
+
+
+def check_by_id(check_id: str) -> Check:
+    return rules.apply(CHECKS_BY_ID[check_id], rule_source())
 
 
 # --------------------------------------------------------------------------- #

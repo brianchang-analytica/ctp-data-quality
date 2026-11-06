@@ -34,7 +34,7 @@ The installer is one file: `dist/ctp_dq_installer.py` (about 360 KB).
    named `ctp_dq_installer`.
 4. At the top right, click **Connect** and pick **Serverless** (or a cluster on Databricks Runtime
    13.3 LTS or later).
-5. Click **Run all**. The last cell prints `Wrote 45 files to /Workspace/Users/<you>/ctp_dq_app`.
+5. Click **Run all**. The last cell prints `Wrote 47 files to /Workspace/Users/<you>/ctp_dq_app`.
 6. Refresh the workspace browser. A `ctp_dq_app` folder now holds the app.
 
 ## 3. Get write access for the results (one time)
@@ -99,8 +99,36 @@ GRANT USE SCHEMA, SELECT ON SCHEMA ctp_pd_catalog.gold_ctp_edw  TO `<app service
 ## 7. Open, check and share
 
 1. Click the app's URL. The footer should read **Data as of** with the time of the job run.
-2. Open **Checks** and inspect one check to confirm records load.
+2. Open **Checks** and open one check to confirm records load.
 3. On the app page, open **Permissions** and give stewards **Can use**.
+
+## Optional: manage the rules in the workspace
+
+The **Rule list** page shows every rule the app checks. Its wording and limits can come from a file
+in the workspace, so you can change them without deploying the app again. This works with either
+setup in this guide.
+
+1. In the app, open **Rule list**, expand **Manage these rules in Databricks** and click
+   **Download the rule file**. You get `ctp_dq_rules.json`.
+2. In **Workspace**, open **Shared**, click **Create > Folder** and name it `ctp_dq`. Open it,
+   click **⋮ > Import**, choose **File** and pick `ctp_dq_rules.json`. If Import refuses it, click
+   **Create > File**, name it `ctp_dq_rules.json` and paste the contents.
+3. Click the file's **⋮** menu and choose **Share**. Add the app's service principal (shown on the
+   app page under **Authorization**) with **Can read**.
+4. Open the app folder's `app.yaml` and add this under `env:`:
+
+   ```yaml
+     - name: DQ_RULES_PATH
+       value: /Workspace/Shared/ctp_dq/ctp_dq_rules.json
+   ```
+
+5. On the app page, click **Deploy**. **Rule list** should now say "Wording from the workspace file".
+
+To change a rule later, open `ctp_dq_rules.json` in the workspace and edit `title`,
+`what_it_checks`, `why_it_matters`, `how_to_fix`, `impact`, `needs_attention_below_pct`,
+`action_needed_below_pct` or `assumptions`. The app picks up the change within 10 minutes, or right
+away after **Re-run all checks**. The checks' logic stays in the app, so a typo cannot break a check;
+**Rule list** names any value it could not use.
 
 ## If something goes wrong
 
@@ -112,6 +140,7 @@ GRANT USE SCHEMA, SELECT ON SCHEMA ctp_pd_catalog.gold_ctp_edw  TO `<app service
 | "You do not have permission" on a check | Missing grant from step 3 (job) or step 6 (app). |
 | The job run is very slow or times out | Run with `core` first. Ask for a larger serverless budget or job cluster. |
 | Import refuses the file | Make sure the file name ends in `.py` and choose **File**, not **URL**. |
+| **Rule list** says "Could not read the rule file" | Check that `DQ_RULES_PATH` matches the file's path exactly and that the app's service principal has **Can read** on it. |
 
 ## Updating the app later
 

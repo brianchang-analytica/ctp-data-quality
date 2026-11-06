@@ -135,6 +135,28 @@ cannot reach PyPI, point it at the agency's package mirror. The refresh job need
 | `DQ_MAX_PARALLEL_QUERIES` | `6` | Checks run concurrently on the warehouse. |
 | `DQ_DEMO_MODE` | `false` | Force synthetic data even with a warehouse. |
 | `DQ_CHECK_SET` | `core` | MVP shows the curated core set; `all` shows every check. |
+| `DQ_RULES_PATH` | empty | Workspace file with the rules' wording and limits, for example `/Workspace/Shared/ctp_dq/ctp_dq_rules.json`. Empty = wording built into the app. See [Rules in the workspace](#rules-in-the-workspace). |
+
+## Rules in the workspace
+
+Each rule is one check. The **Rule list** page shows every rule in plain language: what it checks,
+why it matters, how to fix, the systems, the impact and the pass-rate limits.
+
+The wording and limits can live in a JSON file in the Databricks workspace, so the data team can
+change them without a redeploy. The SQL behind each rule stays in the app, so an edit to the file
+cannot change what a check looks for or break it.
+
+1. Get the file from **Rule list > Manage these rules in Databricks > Download the rule file**, or
+   run `python tools/export_rules.py` (writes `dist/ctp_dq_rules.json`).
+2. Import it into a workspace folder, for example `/Workspace/Shared/ctp_dq/`.
+3. Share the file with the app's service principal: **Can read**.
+4. Set `DQ_RULES_PATH` in `app.yaml` to the file's path and deploy the app again.
+
+The app reads the file through the Workspace API every 10 minutes, and right away after **Re-run
+all checks**. The file can change `title`, `what_it_checks`, `why_it_matters`, `how_to_fix`,
+`impact`, `needs_attention_below_pct`, `action_needed_below_pct` and `assumptions`; other fields
+are for reference. If the file is missing, unreadable or has a bad value, the Rule list page says
+what is wrong and the app keeps the built-in wording for that rule. See `dq/rules.py`.
 
 ## Confirmed on real data
 

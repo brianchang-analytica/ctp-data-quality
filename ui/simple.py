@@ -11,10 +11,15 @@ from datetime import datetime
 
 import streamlit as st
 
-from dq.checks import CHECKS_BY_ID
-from dq.checks.core import AREAS, KIND_WORDS, active_checks, area_of
+from dq.checks.core import KIND_WORDS
 from dq.engine import Filters, Summary
-from dq.model import DIMENSION_ORDER, FILTER_OFFICE, FILTER_SUBMISSION_TYPE, SEVERITIES, SYSTEMS, Check
+from dq.model import (
+    DIMENSION_ORDER,
+    FILTER_OFFICE,
+    FILTER_SUBMISSION_TYPE,
+    STATUS_LABEL,
+    Check,
+)
 from dq.settings import SETTINGS
 from ui import data, sidebar
 from ui.checks_view import _breakdown_tab, _trend_tab, excel_bytes, sort_by_priority, steward_frame
@@ -23,7 +28,7 @@ from ui.components import (
     esc,
     fmt_int,
     fmt_pct,
-    glass_row,
+    glass,
     md,
     meter_row,
     plain_chip,
@@ -31,7 +36,6 @@ from ui.components import (
     status_icon,
     status_pill,
     systems_chips,
-    tip,
 )
 
 
@@ -46,7 +50,7 @@ def filters() -> Filters:
 
 def load() -> tuple[list[Check], dict[str, Summary], datetime]:
     """Run the active checks under the current filters and return those the filters let through."""
-    all_checks = active_checks()
+    all_checks = data.checks_in_app()
     with st.spinner("Running the checks…"):
         sums, ran_at = data.summaries(filters(), all_checks)
     if SETTINGS.demo_mode:
@@ -133,47 +137,89 @@ def kind_meters(checks: list[Check], sums: dict[str, Summary]) -> str:
 
 
 def pills(c: Check) -> str:
-    out = systems_chips(c.systems) if c.is_cross_system else ""
-    out += plain_chip(KIND_WORDS[c.dimension])
-    out += f'<span class="dq-chip dq-sev-{esc(c.severity)}" title="{esc(SEVERITIES[c.severity]["explain"])}">{esc(c.severity)} impact</span>'
+    out = systems_chips(c.systems) + plain_chip(KIND_WORDS[c.dimension])
+    out += f'<span class="dq-chip dq-sev-{esc(c.severity)}">{esc(c.severity)} impact</span>'
     missing = unfiltered_by(c)
     if missing:
-        out += (f'<span class="dq-chip" style="border-style:dashed" title="Not filtered by '
-                f'{" or ".join(missing)}. This check covers all of them.">All {" & ".join(m + "s" for m in missing)}</span>')
+        out += f'<span class="dq-chip" style="border-style:dashed">All {" & ".join(m + "s" for m in missing)}</span>'
     return out
 
 
-def check_row(c: Check, s: Summary, key: str) -> None:
-    with glass_row(f"{key}_{c.id}"):
-        left, mid, right = st.columns([6, 2.2, 1.2], vertical_alignment="center")
-        with left:
-            md(
-                f'<div style="display:flex;gap:10px;align-items:flex-start">'
-                f'<span style="margin-top:2px">{status_icon(s.status(c), 18)}</span><div>'
-                f'<div class="dq-title">{esc(c.title)}{tip(c.question + chr(10) + chr(10) + "Why it matters: " + c.why, "left")}</div>'
-                f'<div style="margin-top:6px">{pills(c)}</div></div></div>'
-            )
-        with mid:
-            if s.error:
-                md('<div class="dq-small">Could not run</div>')
-            elif not s.checked:
-                md('<div class="dq-muted">No records for these filters</div>')
-            else:
-                md(
-                    f'<div class="dq-title" style="font-variant-numeric:tabular-nums">{fmt_int(s.failed)} {esc(c.record_label)}</div>'
-                    f'<div class="dq-muted">{fmt_pct(1 - (s.pass_rate or 0))} of {fmt_int(s.checked)} checked</div>'
-                )
-        with right:
-            if st.button("Inspect", key=f"in_{key}_{c.id}", icon=":material/search:", width="stretch"):
+# One panel per list. Every row uses the same grid as the header, so each detail sits in a
+# labeled column the eye can scan down. The grid collapses to a stacked layout when narrow.
+# Rule wording lives on the Rule list page, so rows carry no hover text.
+
+_IMPACT_DOT = {"High": "var(--crit)", "Medium": "var(--warn)", "Low": "var(--muted)"}
+
+
+def _list_header() -> str:
+    return (
+        '<div class="dq-cq"><div class="dq-grid dq-head">'
+        "<span>Check</span><span>Problem type</span><span>Impact</span><span>Records affected</span>"
+        "</div></div>"
+    )
+
+
+def _records_cell(c: Check, s: Summary) -> str:
+    if s.error:
+        return '<div class="dq-num">Could not run</div>'
+    if not s.checked:
+        return '<div class="dq-num dq-quiet">No records for these filters</div>'
+    if not s.failed:
+        return '<div class="dq-num dq-quiet">None</div>'
+    return (f'<div class="dq-num"><b>{fmt_int(s.failed)}</b> {esc(c.record_label)}'
+            f'<span class="dq-pct">{fmt_pct(1 - (s.pass_rate or 0))}</span></div>')
+
+
+def _row_cells(c: Check, s: Summary) -> str:
+    status = s.status(c)
+    missing = unfiltered_by(c)
+    note = f'<div class="dq-note">Covers all {" and ".join(m + "s" for m in missing)}</div>' if missing else ""
+    return (
+        '<div class="dq-cq"><div class="dq-grid">'
+        f'<div class="dq-c-check"><span class="dq-c-icon" role="img" aria-label="{esc(STATUS_LABEL.get(status, status))}">'
+        f'{status_icon(status, 18)}</span><div><div class="dq-c-title">{esc(c.title)}</div>{note}</div></div>'
+        f'<div class="dq-c-kind">{esc(KIND_WORDS[c.dimension])}</div>'
+        f'<div class="dq-c-imp"><span class="dq-dot" style="background:{_IMPACT_DOT[c.severity]}"></span>'
+        f'<span>{esc(c.severity)}<span class="dq-narrow"> impact</span></span></div>'
+        f'<div class="dq-c-rec">{_records_cell(c, s)}</div>'
+        "</div></div>"
+    )
+
+
+def _row(c: Check, s: Summary, key: str) -> None:
+    with st.container(key=f"dqrow_{key}_{c.id}"):
+        cells, action = st.columns([12, 1], vertical_alignment="center")
+        with cells:
+            md(_row_cells(c, s))
+        with action:
+            if st.button("Open", key=f"in_{key}_{c.id}", width="stretch",
+                         help="See the records to fix and download them to Excel."):
                 check_dialog(c.id, s)
 
 
-def check_rows(checks: list[Check], sums: dict[str, Summary], key: str) -> None:
+def check_rows(checks: list[Check], sums: dict[str, Summary], key: str, grouped: bool = True) -> None:
+    """All checks in one panel, most serious first. Grouped splits those that need attention from the rest."""
     if not checks:
         no_results_note()
         return
-    for c in sort_by_priority(checks, sums):
-        check_row(c, sums[c.id], key)
+    ordered = sort_by_priority(checks, sums)
+    groups = [("", ordered)]
+    if grouped:
+        attention = [c for c in ordered if needs_attention(c, sums[c.id])]
+        groups = [("Needs attention", attention), ("Healthy", [c for c in ordered if c not in attention])]
+    with glass(f"list_{key}"):
+        with st.container(key=f"dqhead_{key}"):
+            head, _ = st.columns([12, 1], vertical_alignment="center")
+            with head:
+                md(_list_header())
+        for title, rows in groups:
+            if not rows:
+                continue
+            if title:
+                md(f'<div class="dq-group">{esc(title)}<span>{len(rows)}</span></div>')
+            for c in rows:
+                _row(c, sums[c.id], key)
 
 
 # --------------------------------------------------------------------------- #
@@ -195,10 +241,10 @@ def _filter_note(c: Check, f: Filters) -> str:
 
 @st.dialog("Check details", width="large")
 def check_dialog(check_id: str, s: Summary) -> None:
-    c = CHECKS_BY_ID[check_id]
+    c = data.check_by_id(check_id)
     f = filters()
     md(
-        f'<div style="margin-bottom:6px">{plain_chip(AREAS[area_of(c)].name)}{pills(c)}</div>'
+        f'<div style="margin-bottom:6px">{pills(c)}</div>'
         f'<div style="font-size:21px;font-weight:650;letter-spacing:-.02em;line-height:1.25">{esc(c.title)}</div>'
         f'<div class="dq-small" style="margin-top:4px">{esc(c.question)}</div>'
     )

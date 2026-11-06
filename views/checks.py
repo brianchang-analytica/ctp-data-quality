@@ -1,8 +1,8 @@
-"""Checks: every check in one area, most serious first."""
+"""Checks: every check in one area, most serious first. A check that compares two systems shows under both."""
 
 import streamlit as st
 
-from dq.checks.core import AREA_ORDER, AREAS, area_of
+from dq.checks.core import AREA_ORDER, AREAS, areas_of
 from ui import simple
 from ui.components import esc, glass, md
 
@@ -20,14 +20,14 @@ elif st.session_state.get("area_choice") not in AREAS:
 
 
 def _label(key: str) -> str:
-    n = sum(1 for c in checks if area_of(c) == key and simple.needs_attention(c, sums[c.id]))
+    n = sum(1 for c in checks if key in areas_of(c) and simple.needs_attention(c, sums[c.id]))
     return f"{AREAS[key].name} ({n})" if n else AREAS[key].name
 
 
 key = st.segmented_control("Area", AREA_ORDER, format_func=_label, key="area_choice",
                            label_visibility="collapsed",
                            help="The number shows how many checks in each area need attention.") or AREA_ORDER[0]
-in_area = [c for c in checks if area_of(c) == key]
+in_area = [c for c in checks if key in areas_of(c)]
 
 st.write("")
 with glass(f"areahead_{key}"):

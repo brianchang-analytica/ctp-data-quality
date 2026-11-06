@@ -68,6 +68,10 @@ class Settings:
     detail_row_limit: int = field(default_factory=lambda: int(os.getenv("DQ_DETAIL_ROW_LIMIT", "5000")))
     max_parallel_queries: int = field(default_factory=lambda: int(os.getenv("DQ_MAX_PARALLEL_QUERIES", "6")))
 
+    # Optional workspace file with the rules' wording and limits (see dq/rules.py), for example
+    # /Workspace/Shared/ctp_dq/ctp_dq_rules.json. Empty = use the wording built into the app.
+    rules_path: str = field(default_factory=lambda: os.getenv("DQ_RULES_PATH", "").strip())
+
     @property
     def demo_mode(self) -> bool:
         return self.force_demo or not self.warehouse_id

@@ -22,6 +22,7 @@ st.session_state["filters"] = sidebar.render(show_technical=False, kind_labels=K
 pages = [
     st.Page(VIEWS / "overview.py", title="Overview", icon=":material/space_dashboard:", default=True),
     st.Page(VIEWS / "checks.py", title="Checks", icon=":material/fact_check:"),
+    st.Page(VIEWS / "rules.py", title="Rule list", icon=":material/rule:"),
     st.Page(VIEWS / "trace.py", title="Trace a submission", icon=":material/travel_explore:"),
     st.Page(VIEWS / "about.py", title="About", icon=":material/help:"),
 ]
